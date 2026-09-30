@@ -1,83 +1,715 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全球 Pikmin Level 3 找菇</title>
 
-<title>全球 Level 3 找菇</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-* {
-  box-sizing: border-box;
+    body {
+      margin: 0;
+      background: #0b0d10;
+      color: #f5f7fa;
+      font-family: Arial, "Noto Sans TC", sans-serif;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: auto;
+      padding: 24px 16px 60px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin: 10px 0 8px;
+    }
+
+    .sub {
+      color: #9ca6b3;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      background: #15191f;
+      border: 1px solid #2a313b;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #343c48;
+      background: #10141a;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      background: #1976d2;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .checkbox input {
+      width: auto;
+      transform: scale(1.25);
+    }
+
+    #status {
+      margin-top: 14px;
+      color: #aeb8c5;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .stats {
+      margin: 15px 0;
+      color: #c8d0da;
+    }
+
+    .cards {
+      display: grid;
+      gap: 12px;
+    }
+
+    .card {
+      background: #15191f;
+      border: 1px solid #2a313b;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .title {
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .row {
+      color: #c4ccd6;
+      margin: 6px 0;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 9px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      border-radius: 999px;
+      background: #252c35;
+      color: #e7ebef;
+      font-size: 13px;
+    }
+
+    .map {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 9px 12px;
+      background: #1976d2;
+      color: white;
+      text-decoration: none;
+      border-radius: 9px;
+    }
+
+    .error {
+      color: #ff8585 !important;
+    }
+
+    .ok {
+      color: #77dd99 !important;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🍄 全球 Level 3 找菇</h1>
+
+  <div class="sub">
+    全球 Pikmin Bloom 蘑菇資料搜尋，只顯示 Level 3。
+  </div>
+
+  <div class="panel">
+
+    <div class="grid">
+
+      <input
+        id="search"
+        type="text"
+        placeholder="搜尋國家、城市、地點"
+      >
+
+      <select id="type">
+        <option value="">全部菇種類</option>
+        <option value="2">🔴 大紅菇</option>
+        <option value="5">🔵 大藍菇</option>
+        <option value="6">🟡 大黃菇</option>
+        <option value="7">⚪ 大白菇</option>
+        <option value="8">🟣 大紫菇</option>
+        <option value="9">🌸 大粉菇</option>
+        <option value="11">🔥 大火菇</option>
+        <option value="12">💧 大水菇</option>
+        <option value="13">💎 大水晶菇</option>
+        <option value="17">⚡ 大電菇</option>
+        <option value="18">☠️ 大毒菇</option>
+        <option value="26">🧊 大冰藍菇</option>
+      </select>
+
+      <select id="sort">
+        <option value="recent">最近更新</option>
+        <option value="ending">最快結束</option>
+        <option value="players">參加人數最少</option>
+      </select>
+
+      <button id="reload">
+        重新抓取資料
+      </button>
+
+    </div>
+
+    <label class="checkbox">
+      <input id="joinable" type="checkbox" checked>
+      只顯示還能加入
+    </label>
+
+    <div id="status">
+      準備讀取資料…
+    </div>
+
+  </div>
+
+  <div id="stats" class="stats"></div>
+  <div id="cards" class="cards"></div>
+
+</div>
+
+<script>
+/*
+  這裡使用你已建立的 Cloudflare Worker。
+*/
+const API = "https://late-glade-6923.awho86958.workers.dev";
+
+let allMushrooms = [];
+
+const TYPE_NAMES = {
+  2: "🔴 大紅菇",
+  5: "🔵 大藍菇",
+  6: "🟡 大黃菇",
+  7: "⚪ 大白菇",
+  8: "🟣 大紫菇",
+  9: "🌸 大粉菇",
+  11: "🔥 大火菇",
+  12: "💧 大水菇",
+  13: "💎 大水晶菇",
+  17: "⚡ 大電菇",
+  18: "☠️ 大毒菇",
+  26: "🧊 大冰藍菇"
+};
+
+const searchEl = document.getElementById("search");
+const typeEl = document.getElementById("type");
+const sortEl = document.getElementById("sort");
+const joinableEl = document.getElementById("joinable");
+const reloadEl = document.getElementById("reload");
+const statusEl = document.getElementById("status");
+const statsEl = document.getElementById("stats");
+const cardsEl = document.getElementById("cards");
+
+
+function safe(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-body {
-  margin: 0;
-  background: #0b0d10;
-  color: #f5f7fa;
-  font-family: Arial, "Noto Sans TC", sans-serif;
+
+function formatTime(value) {
+
+  if (!value) return "未知";
+
+  let time = Number(value);
+
+  if (!Number.isFinite(time)) {
+    return safe(value);
+  }
+
+  /*
+    API 有些時間是秒，有些可能是毫秒。
+  */
+  if (time < 100000000000) {
+    time *= 1000;
+  }
+
+  const date = new Date(time);
+
+  if (isNaN(date.getTime())) {
+    return "未知";
+  }
+
+  return date.toLocaleString("zh-TW", {
+    hour12: false
+  });
 }
 
-main {
-  max-width: 980px;
-  margin: auto;
-  padding: 22px 16px 60px;
+
+function normalize(item) {
+
+  return {
+    id: item.id ?? "",
+
+    level: Number(item.level ?? 0),
+
+    type: Number(item.type ?? 0),
+
+    lat: Number(item.lat),
+
+    lng: Number(item.lng),
+
+    country:
+      item.location_country ??
+      item.country ??
+      "",
+
+    city:
+      item.location_city ??
+      item.city ??
+      "",
+
+    participants: Number(
+      item.challenger_count ??
+      item.participants ??
+      0
+    ),
+
+    capacity: Number(
+      item.challenger_capacity ??
+      item.capacity ??
+      0
+    ),
+
+    totalPower: Number(
+      item.total_power ??
+      0
+    ),
+
+    finish:
+      item.finish_ms ??
+      item.finish_time ??
+      0,
+
+    updated:
+      item.last_seen ??
+      item.updated_at ??
+      item.discovered_at ??
+      0
+  };
 }
 
-h1 {
-  font-size: 34px;
-  margin: 10px 0;
+
+function extractItems(data) {
+
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (Array.isArray(data.mushrooms)) {
+    return data.mushrooms;
+  }
+
+  if (Array.isArray(data.data)) {
+    return data.data;
+  }
+
+  if (Array.isArray(data.results)) {
+    return data.results;
+  }
+
+  return [];
 }
 
-.desc {
-  color: #9ca3af;
-  line-height: 1.6;
-  margin-bottom: 20px;
+
+async function loadData() {
+
+  reloadEl.disabled = true;
+
+  statusEl.className = "";
+  statusEl.textContent = "正在抓取全球蘑菇資料…";
+
+  cardsEl.innerHTML = "";
+  statsEl.textContent = "";
+
+  try {
+
+    const response = await fetch(
+      API + "?limit=1000&_=" + Date.now(),
+      {
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "HTTP " + response.status
+      );
+    }
+
+    const data = await response.json();
+
+    const raw = extractItems(data);
+
+    if (!raw.length) {
+      throw new Error(
+        "API 有回應，但找不到 mushrooms 資料"
+      );
+    }
+
+    const normalized =
+      raw.map(normalize);
+
+    allMushrooms =
+      normalized.filter(m =>
+        m.level === 3
+      );
+
+    statusEl.className = "ok";
+
+    statusEl.textContent =
+      "讀取成功：API 共回傳 " +
+      raw.length +
+      " 筆，目前 Level 3 有 " +
+      allMushrooms.length +
+      " 筆。";
+
+    render();
+
+  } catch (error) {
+
+    console.error(error);
+
+    statusEl.className = "error";
+
+    statusEl.textContent =
+      "讀取失敗：" +
+      error.message;
+
+    statsEl.textContent =
+      "Cloudflare Worker 有開啟，但網站目前無法取得有效資料。";
+
+  } finally {
+
+    reloadEl.disabled = false;
+
+  }
 }
 
-.panel {
-  background: #15191f;
-  border: 1px solid #2a313b;
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 20px;
+
+function render() {
+
+  const keyword =
+    searchEl.value
+      .trim()
+      .toLowerCase();
+
+  const selectedType =
+    typeEl.value;
+
+  const onlyJoinable =
+    joinableEl.checked;
+
+  let list =
+    allMushrooms.filter(m => {
+
+      if (
+        selectedType &&
+        String(m.type) !== selectedType
+      ) {
+        return false;
+      }
+
+      if (keyword) {
+
+        const text =
+          (
+            m.country + " " +
+            m.city + " " +
+            (TYPE_NAMES[m.type] || "")
+          ).toLowerCase();
+
+        if (!text.includes(keyword)) {
+          return false;
+        }
+      }
+
+      if (onlyJoinable) {
+
+        /*
+          capacity = 0 時不強制排除，
+          因為部分掃描資料可能沒有容量。
+        */
+        if (
+          m.capacity > 0 &&
+          m.participants >= m.capacity
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+
+    });
+
+
+  if (sortEl.value === "recent") {
+
+    list.sort(
+      (a, b) =>
+        Number(b.updated || 0) -
+        Number(a.updated || 0)
+    );
+
+  }
+
+
+  if (sortEl.value === "ending") {
+
+    list.sort(
+      (a, b) =>
+        Number(a.finish || Infinity) -
+        Number(b.finish || Infinity)
+    );
+
+  }
+
+
+  if (sortEl.value === "players") {
+
+    list.sort(
+      (a, b) =>
+        a.participants -
+        b.participants
+    );
+
+  }
+
+
+  statsEl.textContent =
+    "目前顯示 " +
+    list.length +
+    " 個 Level 3 蘑菇";
+
+
+  if (!list.length) {
+
+    cardsEl.innerHTML =
+      '<div class="panel">目前篩選條件沒有找到符合的 Level 3 蘑菇。</div>';
+
+    return;
+
+  }
+
+
+  /*
+    手機一次塞幾千張卡會很痛苦，
+    先顯示前 300 筆。
+  */
+  const display =
+    list.slice(0, 300);
+
+
+  cardsEl.innerHTML =
+    display.map(m => {
+
+      const name =
+        TYPE_NAMES[m.type] ||
+        "🍄 Type " + m.type + " Level 3";
+
+      const location =
+        [m.country, m.city]
+          .filter(Boolean)
+          .join(" · ") ||
+        "地點未知";
+
+      const participantText =
+        m.capacity > 0
+          ? m.participants + " / " + m.capacity
+          : String(m.participants);
+
+      const mapAvailable =
+        Number.isFinite(m.lat) &&
+        Number.isFinite(m.lng);
+
+      const mapUrl =
+        mapAvailable
+          ? "https://www.google.com/maps?q=" +
+            encodeURIComponent(
+              m.lat + "," + m.lng
+            )
+          : "";
+
+      return `
+        <div class="card">
+
+          <div class="title">
+            ${safe(name)}
+          </div>
+
+          <div>
+            <span class="tag">
+              Level 3
+            </span>
+
+            <span class="tag">
+              Type ${safe(m.type)}
+            </span>
+          </div>
+
+          <div class="row">
+            📍 ${safe(location)}
+          </div>
+
+          <div class="row">
+            👥 參加人數：
+            ${safe(participantText)}
+          </div>
+
+          <div class="row">
+            ⚔️ 總戰力：
+            ${safe(m.totalPower)}
+          </div>
+
+          <div class="row">
+            🕒 結束：
+            ${formatTime(m.finish)}
+          </div>
+
+          <div class="row">
+            🔄 最近掃描：
+            ${formatTime(m.updated)}
+          </div>
+
+          ${
+            mapAvailable
+              ? `
+                <div class="row">
+                  GPS：
+                  ${safe(m.lat)},
+                  ${safe(m.lng)}
+                </div>
+
+                <a
+                  class="map"
+                  href="${safe(mapUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Google 地圖
+                </a>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+
+    }).join("");
+
+
+  if (list.length > 300) {
+
+    cardsEl.insertAdjacentHTML(
+      "beforeend",
+      `
+      <div class="panel">
+        共找到 ${list.length} 筆。
+        為避免手機卡死，目前先顯示前 300 筆，
+        可以使用上方搜尋與菇種類縮小範圍。
+      </div>
+      `
+    );
+
+  }
+
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
 
-input,
-select,
-button {
-  width: 100%;
-  padding: 15px;
-  border-radius: 13px;
-  border: 1px solid #343c48;
-  background: #10141a;
-  color: white;
-  font-size: 16px;
-}
+reloadEl.addEventListener(
+  "click",
+  loadData
+);
 
-button {
-  background: #1976d2;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
+searchEl.addEventListener(
+  "input",
+  render
+);
 
-button:disabled {
-  opacity: 0.5;
-}
+typeEl.addEventListener(
+  "change",
+  render
+);
 
-.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 15px;
-}
+sortEl.addEventListener(
+  "change",
+  render
+);
 
-.checkbox input {
- 
+joinableEl.addEventListener(
+  "change",
+  render
+);
+
+
+/*
+  頁面開啟後自動抓一次。
+*/
+loadData();
+
+</script>
+
+</body>
+</html>
