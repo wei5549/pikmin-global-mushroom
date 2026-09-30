@@ -1,749 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>全球 Pikmin Level 3 找菇</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>全球 Level 3 找菇</title>
 
 <style>
-body{
-  margin:0;
-  background:#0b0d10;
-  color:#f5f7fa;
-  font-family:system-ui,"Noto Sans TC",sans-serif
-}
-main{max-width:980px;margin:auto;padding:18px}
-.panel,.card{
-  background:#15191f;
-  border:1px solid #2a313b;
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:12px
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
-  gap:10px
-}
-input,select,button{
-  width:100%;
-  box-sizing:border-box;
-  border:1px solid #2a313b;
-  border-radius:11px;
-  padding:12px;
-  background:#0f1318;
-  color:#fff;
-  font-size:15px
-}
-button{
-  background:#1877d2;
-  border:0;
-  font-weight:700
-}
-.row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin-top:12px
-}
-.row input{width:auto}
-.muted,#status{
-  color:#9ca8b7;
-  font-size:13px
-}
-.top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px
-}
-.name{
-  font-size:18px;
-  font-weight:800
-}
-.badge{
-  padding:5px 9px;
-  border-radius:999px;
-  background:#27303a;
-  font-size:12px
-}
-.join{color:#58d68d}
-.meta{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-top:10px
-}
-.actions{
-  display:flex;
-  gap:8px;
-  margin-top:12px
-}
-.actions a{
-  flex:1;
-  text-align:center;
-  text-decoration:none;
-  color:white;
-  padding:10px;
-  border-radius:10px;
-  background:#252c35
-}
-@media(max-width:520px){
-  .meta{grid-template-columns:1fr}
-}
-</style>
-</head>
-
-<body>
-<main>
-
-<h1>🍄 全球 Level 3 找菇</h1>
-
-<p class="muted">
-資料來源：Pikmin Mushroom Radar 公開 API。
-實際涵蓋範圍與更新速度取決於來源掃描。
-</p>
-
-<section class="panel">
-
-<div class="grid">
-
-<input
-  id="q"
-  placeholder="搜尋國家、城市、地標、菇名稱"
->
-
-<select id="type">
-<option value="">全部菇種類</option>
-</select>
-
-<select id="sort">
-<option value="updated">最近更新</option>
-<option value="ending">最快結束</option>
-<option value="people">參加人數少</option>
-</select>
-
-<button id="refresh">
-重新抓取資料
-</button>
-
-</div>
-
-<label class="row">
-<input
-  id="joinable"
-  type="checkbox"
-  checked
->
-只顯示還能加入
-</label>
-
-<p id="status">
-準備讀取資料…
-</p>
-
-</section>
-
-<div id="cards"></div>
-
-</main>
-
-<script>
-
-const API =
-'https://mush.odyliao.cc/api/mushrooms';
-
-let raw = [];
-
-const $ = x =>
-document.getElementById(x);
-
-const v = (o,...k) => {
-
-  for(const x of k){
-
-    if(o?.[x] != null)
-      return o[x];
-
-  }
-
-  return null;
-};
-
-const n = x =>
-x == null || x === ''
-? null
-: Number(x);
-
-
-function norm(x){
-
-return {
-
-src:x,
-
-level:n(
-v(
-x,
-'level',
-'mushroom_level',
-'mushroomLevel',
-'size_level',
-'sizeLevel'
-)
-),
-
-type:String(
-v(
-x,
-'type_name',
-'typeName',
-'mushroom_type_name',
-'mushroomTypeName',
-'type',
-'mushroom_type',
-'mushroomType'
-) ?? '未知'
-),
-
-name:String(
-v(
-x,
-'name',
-'spot_name',
-'spotName',
-'mushroom_name',
-'mushroomName',
-'title'
-) ?? '未命名蘑菇'
-),
-
-lat:n(
-v(
-x,
-'lat',
-'latitude'
-)
-),
-
-lng:n(
-v(
-x,
-'lng',
-'lon',
-'longitude'
-)
-),
-
-people:n(
-v(
-x,
-'participants',
-'participant_count',
-'participantCount',
-'current_participants',
-'currentParticipants',
-'player_count',
-'playerCount'
-)
-),
-
-max:n(
-v(
-x,
-'max_participants',
-'maxParticipants',
-'participant_limit',
-'participantLimit',
-'max_players',
-'maxPlayers'
-)
-),
-
-end:v(
-x,
-'end_time',
-'endTime',
-'expires_at',
-'expiresAt',
-'expire_at',
-'expireAt'
-),
-
-updated:v(
-x,
-'updated_at',
-'updatedAt',
-'last_updated',
-'lastUpdated',
-'scanned_at',
-'scannedAt',
-'timestamp'
-),
-
-country:String(
-v(
-x,
-'country',
-'country_name',
-'countryName'
-) ?? ''
-),
-
-city:String(
-v(
-x,
-'city',
-'city_name',
-'cityName',
-'district',
-'region'
-) ?? ''
-)
-
-};
-
+* {
+  box-sizing: border-box;
 }
 
-
-const level3 = m =>
-m.level === 3;
-
-
-const join = m =>
-m.max == null ||
-m.people == null ||
-m.people < m.max;
-
-
-function dt(x){
-
-if(!x)
-return '未知';
-
-const d = new Date(x);
-
-return isNaN(+d)
-? String(x)
-: d.toLocaleString('zh-TW');
-
+body {
+  margin: 0;
+  background: #0b0d10;
+  color: #f5f7fa;
+  font-family: Arial, "Noto Sans TC", sans-serif;
 }
 
-
-function render(){
-
-let a =
-raw.filter(level3);
-
-const q =
-$('q')
-.value
-.trim()
-.toLowerCase();
-
-const t =
-$('type').value;
-
-
-if(q){
-
-a =
-a.filter(m =>
-
-[
-m.name,
-m.type,
-m.country,
-m.city
-
-]
-.join(' ')
-.toLowerCase()
-.includes(q)
-
-);
-
+main {
+  max-width: 980px;
+  margin: auto;
+  padding: 22px 16px 60px;
 }
 
-
-if(t)
-a =
-a.filter(
-m => m.type === t
-);
-
-
-if(
-$('joinable').checked
-)
-
-a =
-a.filter(join);
-
-
-if(
-$('sort').value === 'ending'
-){
-
-a.sort(
-(a,b) =>
-new Date(
-a.end || 8640000000000000
-)
--
-new Date(
-b.end || 8640000000000000
-)
-);
-
+h1 {
+  font-size: 34px;
+  margin: 10px 0;
 }
 
-else if(
-$('sort').value === 'people'
-){
-
-a.sort(
-(a,b) =>
-(a.people ?? 999)
--
-(b.people ?? 999)
-);
-
+.desc {
+  color: #9ca3af;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-else{
-
-a.sort(
-(a,b) =>
-new Date(
-b.updated || 0
-)
--
-new Date(
-a.updated || 0
-)
-);
-
+.panel {
+  background: #15191f;
+  border: 1px solid #2a313b;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 20px;
 }
 
-
-$('status').textContent =
-'已取得 ' +
-raw.length +
-' 筆，目前符合：' +
-a.length +
-' 筆';
-
-
-$('cards').innerHTML =
-
-a.length
-
-?
-
-a.map(m => {
-
-const loc =
-[
-m.country,
-m.city
-]
-.filter(Boolean)
-.join(' · ')
-||
-'地區未知';
-
-
-const gps =
-
-m.lat != null &&
-m.lng != null
-
-?
-
-m.lat.toFixed(5)
-+
-', '
-+
-m.lng.toFixed(5)
-
-:
-
-'座標未知';
-
-
-const map =
-
-m.lat != null &&
-m.lng != null
-
-?
-
-'https://www.google.com/maps/search/?api=1&query='
-+
-encodeURIComponent(
-m.lat +
-',' +
-m.lng
-)
-
-:
-
-'';
-
-
-return `
-
-<article class="card">
-
-<div class="top">
-
-<div>
-
-<div class="name">
-${m.name}
-</div>
-
-<div class="muted">
-${m.type} · Level 3
-</div>
-
-</div>
-
-<span class="badge ${join(m)?'join':''}">
-
-${join(m)?'可加入':'可能已滿'}
-
-</span>
-
-</div>
-
-
-<div class="meta">
-
-<div>
-👥 ${m.people ?? '?'}
-/
-${m.max ?? '?'}
-</div>
-
-<div>
-📍 ${loc}
-</div>
-
-<div>
-⏰ 結束：
-${dt(m.end)}
-</div>
-
-<div>
-🔄 更新：
-${dt(m.updated)}
-</div>
-
-<div>
-GPS：
-${gps}
-</div>
-
-</div>
-
-
-${map ?
-
-`
-
-<div class="actions">
-
-<a
-target="_blank"
-href="${map}"
->
-開啟地圖
-</a>
-
-</div>
-
-`
-
-:
-
-''}
-
-</article>
-
-`;
-
-}).join('')
-
-:
-
-`
-
-<div class="card muted">
-
-目前沒有符合條件的
-Level 3 菇。
-
-</div>
-
-`;
-
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-
-function types(){
-
-const s =
-$('type');
-
-const ts =
-
-[
-...new Set(
-
-raw
-.filter(level3)
-.map(m => m.type)
-
-)
-
-]
-.sort();
-
-
-s.innerHTML =
-
-'<option value="">全部菇種類</option>'
-
-+
-
-ts
-.map(
-x =>
-'<option>' +
-x +
-'</option>'
-)
-.join('');
-
+input,
+select,
+button {
+  width: 100%;
+  padding: 15px;
+  border-radius: 13px;
+  border: 1px solid #343c48;
+  background: #10141a;
+  color: white;
+  font-size: 16px;
 }
 
-
-async function load(){
-
-$('status').textContent =
-'正在讀取公開菇資料…';
-
-
-try{
-
-let out = [];
-
-let cursor = null;
-
-let p = 0;
-
-
-do{
-
-const u =
-new URL(API);
-
-u.searchParams.set(
-'limit',
-'1000'
-);
-
-
-if(cursor)
-
-u.searchParams.set(
-'cursor',
-cursor
-);
-
-
-const r =
-await fetch(u);
-
-
-if(!r.ok)
-
-throw Error(
-'HTTP ' +
-r.status
-);
-
-
-const j =
-await r.json();
-
-
-const rows =
-
-Array.isArray(j)
-
-?
-
-j
-
-:
-
-(
-j.mushrooms ||
-j.items ||
-j.data ||
-j.results ||
-[]
-);
-
-
-out.push(
-...rows.map(norm)
-);
-
-
-cursor =
-
-j.next_cursor ||
-j.nextCursor ||
-j.cursor?.next ||
-null;
-
-
-p++;
-
-
-}
-while(
-cursor &&
-p < 30
-);
-
-
-raw = out;
-
-types();
-
-render();
-
-
+button {
+  background: #1976d2;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-catch(err){
+button:disabled {
+  opacity: 0.5;
+}
 
-$('status').textContent =
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 15px;
+}
 
-'API 讀取失敗：'
-+
-err.message;
-
-
-$('cards').innerHTML =
-
-`
-
-<div class="card muted">
-
-如果看到這段，
-代表公開 API
+.checkbox input {
+ 
