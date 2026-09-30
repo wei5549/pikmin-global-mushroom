@@ -1,132 +1,456 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>測試</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pikmin 全球 Level 3 找菇</title>
+
+<style>
+body{
+  margin:0;
+  background:#0d1117;
+  color:white;
+  font-family:Arial,sans-serif;
+}
+main{
+  max-width:900px;
+  margin:auto;
+  padding:18px;
+}
+h1{font-size:28px}
+.box{
+  background:#161b22;
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:12px;
+}
+input,select,button{
+  width:100%;
+  padding:13px;
+  margin:5px 0;
+  box-sizing:border-box;
+  border-radius:10px;
+  border:1px solid #444;
+  background:#0d1117;
+  color:white;
+  font-size:16px;
+}
+button{
+  background:#1976d2;
+  border:0;
+  font-weight:bold;
+}
+.card{
+  background:#161b22;
+  border:1px solid #30363d;
+  padding:15px;
+  border-radius:14px;
+  margin:10px 0;
+}
+.name{
+  font-size:21px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.info{
+  margin:5px 0;
+  color:#ddd;
+}
+a{
+  color:#58a6ff;
+}
+#status{
+  margin-top:10px;
+  color:#aaa;
+}
+</style>
 </head>
-<body style="background:white;color:black;font-size:40px;">
-測試成功
-</body>
-</html>: "";
 
-      return `
-        <div class="card">
+<body>
+<main>
 
-          <div class="title">
-            ${safe(name)}
-          </div>
+<h1>🍄 全球 Level 3 找菇</h1>
 
-          <div>
-            <span class="tag">
-              Level 3
-            </span>
+<div class="box">
 
-            <span class="tag">
-              Type ${safe(m.type)}
-            </span>
-          </div>
+<input id="search" placeholder="搜尋國家或城市">
 
-          <div class="row">
-            📍 ${safe(location)}
-          </div>
+<select id="type">
+<option value="">全部菇種</option>
+<option value="2">🔴 大紅菇</option>
+<option value="5">🔵 大藍菇</option>
+<option value="6">🟡 大黃菇</option>
+<option value="7">⚪ 大白菇</option>
+<option value="8">🟣 大紫菇</option>
+<option value="9">🌸 大粉菇</option>
+<option value="11">🔥 大火菇</option>
+<option value="12">💧 大水菇</option>
+<option value="13">💎 大水晶菇</option>
+<option value="17">⚡ 大電菇</option>
+<option value="18">☠️ 大毒菇</option>
+<option value="26">🧊 大冰藍菇</option>
+</select>
 
-          <div class="row">
-            👥 參加人數：
-            ${safe(participantText)}
-          </div>
+<select id="sort">
+<option value="new">最近更新</option>
+<option value="people">參加人數最少</option>
+</select>
 
-          <div class="row">
-            ⚔️ 總戰力：
-            ${safe(m.totalPower)}
-          </div>
+<label>
+<input id="join" type="checkbox" checked style="width:auto">
+只顯示還能加入
+</label>
 
-          <div class="row">
-            🕒 結束：
-            ${formatTime(m.finish)}
-          </div>
+<button id="reload">重新抓取資料</button>
 
-          <div class="row">
-            🔄 最近掃描：
-            ${formatTime(m.updated)}
-          </div>
+<div id="status">準備抓取資料...</div>
 
-          ${
-            mapAvailable
-              ? `
-                <div class="row">
-                  GPS：
-                  ${safe(m.lat)},
-                  ${safe(m.lng)}
-                </div>
+</div>
 
-                <a
-                  class="map"
-                  href="${safe(mapUrl)}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Google 地圖
-                </a>
-              `
-              : ""
-          }
+<div id="result"></div>
 
-        </div>
-      `;
+</main>
 
-    }).join("");
+<script>
 
+var API="https://late-glade-6923.awho86958.workers.dev";
 
-  if (list.length > 300) {
+var mushrooms=[];
 
-    cardsEl.insertAdjacentHTML(
-      "beforeend",
-      `
-      <div class="panel">
-        共找到 ${list.length} 筆。
-        為避免手機卡死，目前先顯示前 300 筆，
-        可以使用上方搜尋與菇種類縮小範圍。
-      </div>
-      `
+var names={
+2:"🔴 大紅菇",
+5:"🔵 大藍菇",
+6:"🟡 大黃菇",
+7:"⚪ 大白菇",
+8:"🟣 大紫菇",
+9:"🌸 大粉菇",
+11:"🔥 大火菇",
+12:"💧 大水菇",
+13:"💎 大水晶菇",
+17:"⚡ 大電菇",
+18:"☠️ 大毒菇",
+26:"🧊 大冰藍菇"
+};
+
+function esc(v){
+  var d=document.createElement("div");
+  d.textContent=String(v==null?"":v);
+  return d.innerHTML;
+}
+
+function findMushrooms(obj,out){
+
+  if(!obj)return;
+
+  if(Array.isArray(obj)){
+    obj.forEach(function(x){
+      findMushrooms(x,out);
+    });
+    return;
+  }
+
+  if(typeof obj!=="object")return;
+
+  if(
+    obj.level!==undefined &&
+    obj.type!==undefined &&
+    obj.lat!==undefined &&
+    obj.lng!==undefined
+  ){
+    out.push(obj);
+    return;
+  }
+
+  Object.keys(obj).forEach(function(k){
+    findMushrooms(obj[k],out);
+  });
+}
+
+function timeText(v){
+
+  var n=Number(v);
+
+  if(!n)return "未知";
+
+  if(n<100000000000)n=n*1000;
+
+  var d=new Date(n);
+
+  if(isNaN(d.getTime()))return "未知";
+
+  return d.toLocaleString("zh-TW");
+}
+
+function load(){
+
+  var status=document.getElementById("status");
+  var button=document.getElementById("reload");
+
+  status.textContent="正在抓取資料...";
+  button.disabled=true;
+
+  fetch(API+"?t="+Date.now())
+  .then(function(r){
+
+    if(!r.ok){
+      throw new Error("HTTP "+r.status);
+    }
+
+    return r.json();
+
+  })
+  .then(function(data){
+
+    var found=[];
+
+    findMushrooms(data,found);
+
+    var seen={};
+
+    mushrooms=found.filter(function(x){
+
+      if(Number(x.level)!==3)return false;
+
+      var key=String(
+        x.id ||
+        (
+          x.lat+"|"+
+          x.lng+"|"+
+          x.type
+        )
+      );
+
+      if(seen[key])return false;
+
+      seen[key]=true;
+
+      return true;
+
+    });
+
+    status.textContent=
+      "API 找到 "+found.length+
+      " 筆資料，Level 3 有 "+
+      mushrooms.length+" 筆";
+
+    render();
+
+  })
+  .catch(function(err){
+
+    status.textContent=
+      "讀取失敗："+err.message;
+
+  })
+  .finally(function(){
+
+    button.disabled=false;
+
+  });
+}
+
+function render(){
+
+  var q=document
+    .getElementById("search")
+    .value
+    .trim()
+    .toLowerCase();
+
+  var type=document
+    .getElementById("type")
+    .value;
+
+  var join=document
+    .getElementById("join")
+    .checked;
+
+  var sort=document
+    .getElementById("sort")
+    .value;
+
+  var list=mushrooms.filter(function(x){
+
+    if(type && String(x.type)!==type){
+      return false;
+    }
+
+    var country=
+      x.location_country ||
+      x.country ||
+      "";
+
+    var city=
+      x.location_city ||
+      x.city ||
+      "";
+
+    var text=
+      (country+" "+city).toLowerCase();
+
+    if(q && text.indexOf(q)===-1){
+      return false;
+    }
+
+    var people=Number(
+      x.challenger_count ||
+      x.participants ||
+      0
     );
+
+    var max=Number(
+      x.challenger_capacity ||
+      x.capacity ||
+      0
+    );
+
+    if(join && max>0 && people>=max){
+      return false;
+    }
+
+    return true;
+
+  });
+
+  if(sort==="people"){
+
+    list.sort(function(a,b){
+
+      return Number(a.challenger_count||0)-
+             Number(b.challenger_count||0);
+
+    });
+
+  }else{
+
+    list.sort(function(a,b){
+
+      return Number(
+        b.last_observed_at ||
+        b.last_seen ||
+        b.discovered_at ||
+        0
+      )-
+      Number(
+        a.last_observed_at ||
+        a.last_seen ||
+        a.discovered_at ||
+        0
+      );
+
+    });
 
   }
 
+  var result=document.getElementById("result");
+
+  result.innerHTML=
+    '<div class="box">目前顯示 '+
+    list.length+
+    ' 個 Level 3 蘑菇</div>';
+
+  list.slice(0,300).forEach(function(x){
+
+    var people=Number(
+      x.challenger_count ||
+      x.participants ||
+      0
+    );
+
+    var max=Number(
+      x.challenger_capacity ||
+      x.capacity ||
+      0
+    );
+
+    var country=
+      x.location_country ||
+      x.country ||
+      "";
+
+    var city=
+      x.location_city ||
+      x.city ||
+      "";
+
+    var updated=
+      x.last_observed_at ||
+      x.last_seen ||
+      x.discovered_at ||
+      0;
+
+    var name=
+      names[Number(x.type)] ||
+      "🍄 Type "+x.type;
+
+    var location=
+      (country+" "+city).trim() ||
+      "位置未知";
+
+    var gps=
+      Number(x.lat)+","+
+      Number(x.lng);
+
+    var map=
+      "https://www.google.com/maps?q="+
+      encodeURIComponent(gps);
+
+    var card=document.createElement("div");
+
+    card.className="card";
+
+    card.innerHTML=
+      '<div class="name">'+
+      esc(name)+
+      '</div>'+
+      '<div class="info">📍 '+
+      esc(location)+
+      '</div>'+
+      '<div class="info">👥 參加人數：'+
+      people+
+      (max>0?" / "+max:"")+
+      '</div>'+
+      '<div class="info">⚔️ 總戰力：'+
+      esc(x.total_power||0)+
+      '</div>'+
+      '<div class="info">🔄 最近掃描：'+
+      esc(timeText(updated))+
+      '</div>'+
+      '<div class="info">GPS：'+
+      esc(gps)+
+      '</div>'+
+      '<a href="'+
+      esc(map)+
+      '" target="_blank">📍 Google 地圖</a>';
+
+    result.appendChild(card);
+
+  });
+
 }
 
+document
+.getElementById("reload")
+.addEventListener("click",load);
 
-reloadEl.addEventListener(
-  "click",
-  loadData
-);
+document
+.getElementById("search")
+.addEventListener("input",render);
 
-searchEl.addEventListener(
-  "input",
-  render
-);
+document
+.getElementById("type")
+.addEventListener("change",render);
 
-typeEl.addEventListener(
-  "change",
-  render
-);
+document
+.getElementById("sort")
+.addEventListener("change",render);
 
-sortEl.addEventListener(
-  "change",
-  render
-);
+document
+.getElementById("join")
+.addEventListener("change",render);
 
-joinableEl.addEventListener(
-  "change",
-  render
-);
-
-
-/*
-  頁面開啟後自動抓一次。
-*/
-loadData();
+load();
 
 </script>
-
 </body>
 </html>
