@@ -3,43 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pikmin 全球 Level 3 找菇</title>
+<title>Pikmin 全球大菇雷達</title>
 
 <style>
+*{box-sizing:border-box}
+
 body{
   margin:0;
   background:#0d1117;
   color:white;
-  font-family:Arial,sans-serif;
+  font-family:Arial,"Noto Sans TC",sans-serif;
 }
+
 main{
   max-width:900px;
   margin:auto;
   padding:18px;
 }
-h1{font-size:28px}
+
+h1{
+  font-size:28px;
+  margin-bottom:5px;
+}
+
+.sub{
+  color:#9da7b3;
+  margin-bottom:18px;
+}
+
 .box{
   background:#161b22;
   padding:15px;
   border-radius:14px;
   margin-bottom:12px;
+  border:1px solid #30363d;
 }
+
 input,select,button{
   width:100%;
   padding:13px;
   margin:5px 0;
-  box-sizing:border-box;
   border-radius:10px;
   border:1px solid #444;
   background:#0d1117;
   color:white;
   font-size:16px;
 }
+
 button{
   background:#1976d2;
   border:0;
   font-weight:bold;
 }
+
+button:disabled{
+  opacity:.5;
+}
+
+.check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:10px 0;
+}
+
+.check input{
+  width:auto;
+}
+
+#status{
+  margin-top:10px;
+  color:#aaa;
+}
+
 .card{
   background:#161b22;
   border:1px solid #30363d;
@@ -47,63 +83,84 @@ button{
   border-radius:14px;
   margin:10px 0;
 }
+
 .name{
-  font-size:21px;
+  font-size:22px;
   font-weight:bold;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
+
+.people{
+  font-size:19px;
+  font-weight:bold;
+  background:#222b36;
+  padding:10px;
+  border-radius:9px;
+  margin:10px 0;
+}
+
 .info{
-  margin:5px 0;
+  margin:7px 0;
   color:#ddd;
+  line-height:1.5;
 }
-a{
-  color:#58a6ff;
+
+.map{
+  display:inline-block;
+  margin-top:8px;
+  padding:9px 12px;
+  background:#1976d2;
+  border-radius:8px;
+  color:white;
+  text-decoration:none;
 }
-#status{
-  margin-top:10px;
-  color:#aaa;
+
+.count{
+  font-size:18px;
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
+
 <main>
 
-<h1>🍄 全球 Level 3 找菇</h1>
+<h1>🍄 全球大菇雷達</h1>
+
+<div class="sub">
+只顯示 Level 3 大菇
+</div>
 
 <div class="box">
 
-<input id="search" placeholder="搜尋國家或城市">
+<input
+  id="search"
+  placeholder="搜尋國家、城市"
+>
 
 <select id="type">
-<option value="">全部菇種</option>
-<option value="2">🔴 大紅菇</option>
-<option value="5">🔵 大藍菇</option>
-<option value="6">🟡 大黃菇</option>
-<option value="7">⚪ 大白菇</option>
-<option value="8">🟣 大紫菇</option>
-<option value="9">🌸 大粉菇</option>
-<option value="11">🔥 大火菇</option>
-<option value="12">💧 大水菇</option>
-<option value="13">💎 大水晶菇</option>
-<option value="17">⚡ 大電菇</option>
-<option value="18">☠️ 大毒菇</option>
-<option value="26">🧊 大冰藍菇</option>
+  <option value="">全部大菇</option>
 </select>
 
 <select id="sort">
-<option value="new">最近更新</option>
-<option value="people">參加人數最少</option>
+  <option value="new">最近掃描</option>
+  <option value="people">戰鬥人數最少</option>
+  <option value="peopleHigh">戰鬥人數最多</option>
 </select>
 
-<label>
-<input id="join" type="checkbox" checked style="width:auto">
+<label class="check">
+<input id="join" type="checkbox" checked>
 只顯示還能加入
 </label>
 
-<button id="reload">重新抓取資料</button>
+<button id="reload">
+重新抓取資料
+</button>
 
-<div id="status">準備抓取資料...</div>
+<div id="status">
+準備抓取資料...
+</div>
 
 </div>
 
@@ -113,50 +170,63 @@ a{
 
 <script>
 
-var API="https://late-glade-6923.awho86958.workers.dev";
+var API =
+"https://late-glade-6923.awho86958.workers.dev";
 
-var mushrooms=[];
+var mushrooms = [];
 
-var names={
-2:"🔴 大紅菇",
-5:"🔵 大藍菇",
-6:"🟡 大黃菇",
-7:"⚪ 大白菇",
-8:"🟣 大紫菇",
-9:"🌸 大粉菇",
-11:"🔥 大火菇",
-12:"💧 大水菇",
-13:"💎 大水晶菇",
-17:"⚡ 大電菇",
-18:"☠️ 大毒菇",
-26:"🧊 大冰藍菇"
+var names = {
+  2:"🔴 大紅菇",
+  5:"🔵 大藍菇",
+  6:"🟡 大黃菇",
+  7:"⚪ 大白菇",
+  8:"🟣 大紫菇",
+  9:"🌸 大粉菇",
+  11:"🔥 大火菇",
+  12:"💧 大水菇",
+  13:"💎 大水晶菇",
+  17:"⚡ 大電菇",
+  18:"☠️ 大毒菇",
+  26:"🧊 大冰藍菇"
 };
 
+
 function esc(v){
-  var d=document.createElement("div");
-  d.textContent=String(v==null?"":v);
+
+  var d =
+    document.createElement("div");
+
+  d.textContent =
+    String(v == null ? "" : v);
+
   return d.innerHTML;
 }
 
+
 function findMushrooms(obj,out){
 
-  if(!obj)return;
+  if(!obj) return;
 
   if(Array.isArray(obj)){
+
     obj.forEach(function(x){
       findMushrooms(x,out);
     });
+
     return;
   }
 
-  if(typeof obj!=="object")return;
+  if(typeof obj !== "object"){
+    return;
+  }
 
   if(
-    obj.level!==undefined &&
-    obj.type!==undefined &&
-    obj.lat!==undefined &&
-    obj.lng!==undefined
+    obj.level !== undefined &&
+    obj.type !== undefined &&
+    obj.lat !== undefined &&
+    obj.lng !== undefined
   ){
+
     out.push(obj);
     return;
   }
@@ -166,262 +236,486 @@ function findMushrooms(obj,out){
   });
 }
 
+
 function timeText(v){
 
-  var n=Number(v);
+  var n = Number(v);
 
-  if(!n)return "未知";
+  if(!n){
+    return "未知";
+  }
 
-  if(n<100000000000)n=n*1000;
+  if(n < 100000000000){
+    n = n * 1000;
+  }
 
-  var d=new Date(n);
+  var d = new Date(n);
 
-  if(isNaN(d.getTime()))return "未知";
+  if(isNaN(d.getTime())){
+    return "未知";
+  }
 
-  return d.toLocaleString("zh-TW");
+  return d.toLocaleString(
+    "zh-TW",
+    {hour12:false}
+  );
 }
+
+
+function getPeople(x){
+
+  return Number(
+    x.challenger_count ??
+    x.participant_count ??
+    x.participants ??
+    0
+  );
+}
+
+
+function getCapacity(x){
+
+  return Number(
+    x.challenger_capacity ??
+    x.max_participants ??
+    x.capacity ??
+    0
+  );
+}
+
+
+function getName(x){
+
+  var t = Number(x.type);
+
+  if(names[t]){
+    return names[t];
+  }
+
+  return "🍄 大菇 Type " + t;
+}
+
+
+function buildTypeMenu(){
+
+  var select =
+    document.getElementById("type");
+
+  var current = select.value;
+
+  var types = [];
+
+  mushrooms.forEach(function(x){
+
+    var t = Number(x.type);
+
+    if(types.indexOf(t) === -1){
+      types.push(t);
+    }
+
+  });
+
+  types.sort(function(a,b){
+    return a-b;
+  });
+
+  select.innerHTML =
+    '<option value="">全部大菇</option>';
+
+  types.forEach(function(t){
+
+    var option =
+      document.createElement("option");
+
+    option.value = t;
+
+    option.textContent =
+      names[t] ||
+      "🍄 大菇 Type " + t;
+
+    select.appendChild(option);
+
+  });
+
+  select.value = current;
+}
+
 
 function load(){
 
-  var status=document.getElementById("status");
-  var button=document.getElementById("reload");
+  var status =
+    document.getElementById("status");
 
-  status.textContent="正在抓取資料...";
-  button.disabled=true;
+  var button =
+    document.getElementById("reload");
 
-  fetch(API+"?t="+Date.now())
+  status.textContent =
+    "正在抓取全球大菇資料...";
+
+  button.disabled = true;
+
+  fetch(
+    API + "?t=" + Date.now()
+  )
+
   .then(function(r){
 
     if(!r.ok){
-      throw new Error("HTTP "+r.status);
+      throw new Error(
+        "HTTP " + r.status
+      );
     }
 
     return r.json();
 
   })
+
   .then(function(data){
 
-    var found=[];
+    var found = [];
 
-    findMushrooms(data,found);
+    findMushrooms(
+      data,
+      found
+    );
 
-    var seen={};
+    var seen = {};
 
-    mushrooms=found.filter(function(x){
+    mushrooms =
+      found.filter(function(x){
 
-      if(Number(x.level)!==3)return false;
+        /*
+        Level 3 = 大菇
+        */
+        if(Number(x.level) !== 3){
+          return false;
+        }
 
-      var key=String(
-        x.id ||
-        (
-          x.lat+"|"+
-          x.lng+"|"+
-          x.type
-        )
-      );
+        var key = String(
+          x.id ||
+          (
+            x.lat + "|" +
+            x.lng + "|" +
+            x.type
+          )
+        );
 
-      if(seen[key])return false;
+        if(seen[key]){
+          return false;
+        }
 
-      seen[key]=true;
+        seen[key] = true;
 
-      return true;
+        return true;
+      });
 
-    });
+    buildTypeMenu();
 
-    status.textContent=
-      "API 找到 "+found.length+
-      " 筆資料，Level 3 有 "+
-      mushrooms.length+" 筆";
+    status.textContent =
+      "抓取成功：共找到 " +
+      mushrooms.length +
+      " 個大菇";
 
     render();
 
   })
+
   .catch(function(err){
 
-    status.textContent=
-      "讀取失敗："+err.message;
+    status.textContent =
+      "讀取失敗：" +
+      err.message;
 
   })
+
   .finally(function(){
 
-    button.disabled=false;
+    button.disabled = false;
 
   });
 }
 
+
 function render(){
 
-  var q=document
+  var q =
+    document
     .getElementById("search")
     .value
     .trim()
     .toLowerCase();
 
-  var type=document
+  var selectedType =
+    document
     .getElementById("type")
     .value;
 
-  var join=document
+  var onlyJoinable =
+    document
     .getElementById("join")
     .checked;
 
-  var sort=document
+  var sort =
+    document
     .getElementById("sort")
     .value;
 
-  var list=mushrooms.filter(function(x){
 
-    if(type && String(x.type)!==type){
-      return false;
-    }
+  var list =
+    mushrooms.filter(function(x){
 
-    var country=
-      x.location_country ||
-      x.country ||
-      "";
+      if(
+        selectedType &&
+        String(x.type) !== selectedType
+      ){
+        return false;
+      }
 
-    var city=
-      x.location_city ||
-      x.city ||
-      "";
 
-    var text=
-      (country+" "+city).toLowerCase();
+      var country =
+        x.location_country ||
+        x.country ||
+        "";
 
-    if(q && text.indexOf(q)===-1){
-      return false;
-    }
+      var city =
+        x.location_city ||
+        x.city ||
+        "";
 
-    var people=Number(
-      x.challenger_count ||
-      x.participants ||
-      0
-    );
+      var text =
+        (
+          country +
+          " " +
+          city +
+          " " +
+          getName(x)
+        ).toLowerCase();
 
-    var max=Number(
-      x.challenger_capacity ||
-      x.capacity ||
-      0
-    );
 
-    if(join && max>0 && people>=max){
-      return false;
-    }
+      if(
+        q &&
+        text.indexOf(q) === -1
+      ){
+        return false;
+      }
 
-    return true;
 
-  });
+      var people =
+        getPeople(x);
 
-  if(sort==="people"){
+      var max =
+        getCapacity(x);
 
-    list.sort(function(a,b){
 
-      return Number(a.challenger_count||0)-
-             Number(b.challenger_count||0);
+      if(
+        onlyJoinable &&
+        max > 0 &&
+        people >= max
+      ){
+        return false;
+      }
+
+
+      return true;
 
     });
 
-  }else{
+
+  if(sort === "people"){
 
     list.sort(function(a,b){
 
-      return Number(
-        b.last_observed_at ||
-        b.last_seen ||
-        b.discovered_at ||
-        0
-      )-
-      Number(
-        a.last_observed_at ||
-        a.last_seen ||
-        a.discovered_at ||
-        0
+      return (
+        getPeople(a) -
+        getPeople(b)
       );
 
     });
 
   }
 
-  var result=document.getElementById("result");
 
-  result.innerHTML=
-    '<div class="box">目前顯示 '+
-    list.length+
-    ' 個 Level 3 蘑菇</div>';
+  else if(
+    sort === "peopleHigh"
+  ){
 
-  list.slice(0,300).forEach(function(x){
+    list.sort(function(a,b){
 
-    var people=Number(
-      x.challenger_count ||
-      x.participants ||
-      0
-    );
+      return (
+        getPeople(b) -
+        getPeople(a)
+      );
 
-    var max=Number(
-      x.challenger_capacity ||
-      x.capacity ||
-      0
-    );
+    });
 
-    var country=
+  }
+
+
+  else{
+
+    list.sort(function(a,b){
+
+      var at =
+        Number(
+          a.last_observed_at ||
+          a.last_seen ||
+          a.discovered_at ||
+          0
+        );
+
+      var bt =
+        Number(
+          b.last_observed_at ||
+          b.last_seen ||
+          b.discovered_at ||
+          0
+        );
+
+      return bt-at;
+
+    });
+
+  }
+
+
+  var result =
+    document.getElementById("result");
+
+
+  result.innerHTML =
+    '<div class="box count">' +
+    '🍄 目前找到 ' +
+    list.length +
+    ' 個大菇' +
+    '</div>';
+
+
+  if(list.length === 0){
+
+    result.innerHTML +=
+      '<div class="box">' +
+      '目前沒有符合條件的大菇。' +
+      '</div>';
+
+    return;
+  }
+
+
+  list
+  .slice(0,300)
+  .forEach(function(x){
+
+
+    var people =
+      getPeople(x);
+
+    var max =
+      getCapacity(x);
+
+
+    var peopleText;
+
+    if(max > 0){
+
+      peopleText =
+        people +
+        " / " +
+        max;
+
+    }else{
+
+      peopleText =
+        String(people);
+
+    }
+
+
+    var country =
       x.location_country ||
       x.country ||
       "";
 
-    var city=
+    var city =
       x.location_city ||
       x.city ||
       "";
 
-    var updated=
+
+    var location =
+      (
+        country +
+        " " +
+        city
+      ).trim();
+
+    if(!location){
+      location =
+        "位置未知";
+    }
+
+
+    var updated =
       x.last_observed_at ||
       x.last_seen ||
       x.discovered_at ||
       0;
 
-    var name=
-      names[Number(x.type)] ||
-      "🍄 Type "+x.type;
 
-    var location=
-      (country+" "+city).trim() ||
-      "位置未知";
-
-    var gps=
-      Number(x.lat)+","+
+    var gps =
+      Number(x.lat) +
+      "," +
       Number(x.lng);
 
-    var map=
-      "https://www.google.com/maps?q="+
+
+    var map =
+      "https://www.google.com/maps?q=" +
       encodeURIComponent(gps);
 
-    var card=document.createElement("div");
 
-    card.className="card";
+    var card =
+      document.createElement("div");
 
-    card.innerHTML=
-      '<div class="name">'+
-      esc(name)+
-      '</div>'+
-      '<div class="info">📍 '+
-      esc(location)+
-      '</div>'+
-      '<div class="info">👥 參加人數：'+
-      people+
-      (max>0?" / "+max:"")+
-      '</div>'+
-      '<div class="info">⚔️ 總戰力：'+
-      esc(x.total_power||0)+
-      '</div>'+
-      '<div class="info">🔄 最近掃描：'+
-      esc(timeText(updated))+
-      '</div>'+
-      '<div class="info">GPS：'+
-      esc(gps)+
-      '</div>'+
-      '<a href="'+
-      esc(map)+
-      '" target="_blank">📍 Google 地圖</a>';
+    card.className =
+      "card";
+
+
+    card.innerHTML =
+
+      '<div class="name">' +
+      esc(getName(x)) +
+      '</div>' +
+
+      '<div class="people">' +
+      '👥 目前戰鬥人數：' +
+      esc(peopleText) +
+      '</div>' +
+
+      '<div class="info">' +
+      '📍 ' +
+      esc(location) +
+      '</div>' +
+
+      '<div class="info">' +
+      '⚔️ 總戰力：' +
+      esc(x.total_power || 0) +
+      '</div>' +
+
+      '<div class="info">' +
+      '🔄 最近掃描：' +
+      esc(timeText(updated)) +
+      '</div>' +
+
+      '<div class="info">' +
+      '📌 GPS：' +
+      esc(gps) +
+      '</div>' +
+
+      '<a class="map" href="' +
+      esc(map) +
+      '" target="_blank">' +
+      '📍 Google 地圖' +
+      '</a>';
+
 
     result.appendChild(card);
 
@@ -429,28 +723,50 @@ function render(){
 
 }
 
+
 document
 .getElementById("reload")
-.addEventListener("click",load);
+.addEventListener(
+  "click",
+  load
+);
+
 
 document
 .getElementById("search")
-.addEventListener("input",render);
+.addEventListener(
+  "input",
+  render
+);
+
 
 document
 .getElementById("type")
-.addEventListener("change",render);
+.addEventListener(
+  "change",
+  render
+);
+
 
 document
 .getElementById("sort")
-.addEventListener("change",render);
+.addEventListener(
+  "change",
+  render
+);
+
 
 document
 .getElementById("join")
-.addEventListener("change",render);
+.addEventListener(
+  "change",
+  render
+);
+
 
 load();
 
 </script>
+
 </body>
 </html>
