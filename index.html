@@ -7,7 +7,6 @@
 <title>Pikmin 全球大菇雷達</title>
 
 <style>
-
 *{
   box-sizing:border-box;
 }
@@ -33,7 +32,7 @@ h1{
 .sub{
   color:#9da7b3;
   margin:8px 0 18px;
-  line-height:1.5;
+  line-height:1.6;
 }
 
 .box{
@@ -83,7 +82,7 @@ button:disabled{
 #status{
   margin-top:10px;
   color:#aaa;
-  line-height:1.5;
+  line-height:1.6;
 }
 
 .summary{
@@ -112,6 +111,10 @@ button:disabled{
   padding:11px;
   border-radius:9px;
   margin:10px 0;
+}
+
+.zero{
+  background:#17351f;
 }
 
 .info{
@@ -151,6 +154,10 @@ button:disabled{
   font-weight:bold;
 }
 
+.small{
+  color:#8b949e;
+  font-size:14px;
+}
 </style>
 </head>
 
@@ -171,19 +178,22 @@ button:disabled{
 <input
   id="search"
   type="text"
-  placeholder="🔎 搜尋國家、城市"
->
+  placeholder="🔎 搜尋國家、城市">
 
 
-<select id="type">
-
-<option value="">
-🍄 全部大菇
-</option>
-
+<!-- 地區 -->
+<select id="country">
+  <option value="">🌏 全部地區</option>
 </select>
 
 
+<!-- 大菇種類 -->
+<select id="type">
+  <option value="">🍄 全部大菇</option>
+</select>
+
+
+<!-- 掃描時間 -->
 <select id="age">
 
 <option value="0">
@@ -213,10 +223,15 @@ button:disabled{
 </select>
 
 
+<!-- 排序 / 人數 -->
 <select id="sort">
 
 <option value="new">
 🕒 最新掃描時間
+</option>
+
+<option value="zero">
+👤 戰鬥人數 0
 </option>
 
 <option value="people">
@@ -235,8 +250,7 @@ button:disabled{
 <input
   id="join"
   type="checkbox"
-  checked
->
+  checked>
 
 只顯示最後掃描時還能加入
 
@@ -263,17 +277,12 @@ button:disabled{
 
 <script>
 
-
 var API =
 "https://late-glade-6923.awho86958.workers.dev";
 
 
 var mushrooms = [];
 
-
-/*
-大菇種類名稱
-*/
 
 var names = {
 
@@ -313,9 +322,7 @@ function esc(v){
   document.createElement("div");
 
   d.textContent =
-  String(
-    v == null ? "" : v
-  );
+  String(v == null ? "" : v);
 
   return d.innerHTML;
 
@@ -329,15 +336,11 @@ function findMushrooms(obj,out){
     return;
   }
 
-
   if(Array.isArray(obj)){
 
     obj.forEach(function(x){
 
-      findMushrooms(
-        x,
-        out
-      );
+      findMushrooms(x,out);
 
     });
 
@@ -345,11 +348,9 @@ function findMushrooms(obj,out){
 
   }
 
-
   if(typeof obj !== "object"){
     return;
   }
-
 
   if(
     obj.level !== undefined &&
@@ -364,17 +365,14 @@ function findMushrooms(obj,out){
 
   }
 
+  Object.keys(obj).forEach(function(k){
 
-  Object.keys(obj).forEach(
-    function(k){
+    findMushrooms(
+      obj[k],
+      out
+    );
 
-      findMushrooms(
-        obj[k],
-        out
-      );
-
-    }
-  );
+  });
 
 }
 
@@ -383,15 +381,10 @@ function findMushrooms(obj,out){
 function getPeople(x){
 
   return Number(
-
     x.challenger_count ??
-
     x.participant_count ??
-
     x.participants ??
-
     0
-
   );
 
 }
@@ -401,30 +394,37 @@ function getPeople(x){
 function getCapacity(x){
 
   return Number(
-
     x.challenger_capacity ??
-
     x.max_participants ??
-
     x.capacity ??
-
     0
-
   );
 
 }
 
 
 
+/*
+掃描時間
+
+這裡故意使用 ||
+因為有些資料欄位會是 0。
+
+如果使用 ??
+遇到 0 就不會繼續找下一個時間。
+*/
+
 function getScanTime(x){
 
   return Number(
 
-    x.last_observed_at ??
+    x.participants_verified_at ||
 
-    x.last_seen ??
+    x.last_observed_at ||
 
-    x.discovered_at ??
+    x.last_seen ||
+
+    x.discovered_at ||
 
     0
 
@@ -439,13 +439,9 @@ function getName(x){
   var t =
   Number(x.type);
 
-
   if(names[t]){
-
     return names[t];
-
   }
-
 
   return "🍄 大菇 Type " + t;
 
@@ -458,18 +454,20 @@ function toMilliseconds(v){
   var n =
   Number(v);
 
-
   if(!n){
     return 0;
   }
 
+  /*
+  秒 → 毫秒
+  */
 
   if(n < 100000000000){
 
-    n = n * 1000;
+    n =
+    n * 1000;
 
   }
-
 
   return n;
 
@@ -482,33 +480,22 @@ function timeText(v){
   var n =
   toMilliseconds(v);
 
-
   if(!n){
-
     return "未知";
-
   }
-
 
   var d =
   new Date(n);
 
-
   if(isNaN(d.getTime())){
-
     return "未知";
-
   }
 
-
   return d.toLocaleString(
-
     "zh-TW",
-
     {
       hour12:false
     }
-
   );
 
 }
@@ -520,13 +507,9 @@ function minutesOld(v){
   var n =
   toMilliseconds(v);
 
-
   if(!n){
-
     return Infinity;
-
   }
-
 
   return (
     Date.now() - n
@@ -541,20 +524,17 @@ function ageText(v){
   var m =
   minutesOld(v);
 
-
   if(!isFinite(m)){
-
     return "時間未知";
-
   }
 
+  if(m < 0){
+    return "剛剛";
+  }
 
   if(m < 1){
-
     return "不到 1 分鐘前";
-
   }
-
 
   if(m < 60){
 
@@ -565,7 +545,6 @@ function ageText(v){
 
   }
 
-
   if(m < 1440){
 
     return (
@@ -574,7 +553,6 @@ function ageText(v){
     );
 
   }
-
 
   return (
     Math.floor(m / 1440) +
@@ -590,20 +568,13 @@ function ageClass(v){
   var m =
   minutesOld(v);
 
-
   if(m <= 30){
-
     return "fresh";
-
   }
-
 
   if(m <= 180){
-
     return "old";
-
   }
-
 
   return "veryold";
 
@@ -611,80 +582,63 @@ function ageClass(v){
 
 
 
+/*
+建立大菇種類選單
+*/
+
 function buildTypeMenu(){
 
   var select =
-  document.getElementById(
-    "type"
-  );
-
+  document.getElementById("type");
 
   var current =
   select.value;
 
-
   var types = [];
 
 
-  mushrooms.forEach(
-    function(x){
+  mushrooms.forEach(function(x){
 
-      var t =
-      Number(x.type);
+    var t =
+    Number(x.type);
 
+    if(
+      types.indexOf(t) === -1
+    ){
 
-      if(
-        types.indexOf(t) === -1
-      ){
-
-        types.push(t);
-
-      }
+      types.push(t);
 
     }
-  );
+
+  });
 
 
-  types.sort(
-    function(a,b){
+  types.sort(function(a,b){
 
-      return a-b;
+    return a - b;
 
-    }
-  );
+  });
 
 
   select.innerHTML =
   '<option value="">🍄 全部大菇</option>';
 
 
-  types.forEach(
-    function(t){
+  types.forEach(function(t){
 
-      var option =
-      document.createElement(
-        "option"
-      );
+    var option =
+    document.createElement("option");
 
+    option.value =
+    String(t);
 
-      option.value =
-      String(t);
+    option.textContent =
+    names[t] ||
+    ("🍄 大菇 Type " + t);
 
+    select.appendChild(option);
 
-      option.textContent =
-      names[t] ||
-      (
-        "🍄 大菇 Type " +
-        t
-      );
-
-
-      select.appendChild(
-        option
-      );
-
-    }
-  );
+  });
 
 
   select.value =
@@ -694,22 +648,114 @@ function buildTypeMenu(){
 
 
 
+/*
+建立國家 / 地區選單
+*/
+
+function buildCountryMenu(){
+
+  var select =
+  document.getElementById("country");
+
+  var current =
+  select.value;
+
+  var countries = [];
+
+
+  mushrooms.forEach(function(x){
+
+    var country =
+    String(
+      x.location_country ||
+      x.country ||
+      ""
+    ).trim();
+
+
+    if(
+      country &&
+      countries.indexOf(country) === -1
+    ){
+
+      countries.push(country);
+
+    }
+
+  });
+
+
+  countries.sort(function(a,b){
+
+    return a.localeCompare(
+      b,
+      "zh-Hant"
+    );
+
+  });
+
+
+  select.innerHTML =
+  '<option value="">🌏 全部地區</option>';
+
+
+  countries.forEach(function(country){
+
+    var option =
+    document.createElement("option");
+
+    option.value =
+    country;
+
+    option.textContent =
+    "🌏 " + country;
+
+    select.appendChild(option);
+
+  });
+
+
+  /*
+  如果重新抓取後
+  原本選擇的國家仍存在
+  就保持選擇
+  */
+
+  var exists =
+  Array.from(select.options)
+  .some(function(o){
+
+    return o.value === current;
+
+  });
+
+
+  if(exists){
+
+    select.value =
+    current;
+
+  }
+
+}
+
+
+
+/*
+抓取資料
+*/
+
 function load(){
 
   var status =
-  document.getElementById(
-    "status"
-  );
-
+  document.getElementById("status");
 
   var button =
-  document.getElementById(
-    "reload"
-  );
+  document.getElementById("reload");
 
 
   status.textContent =
-  "正在抓取全球大菇資料...";
+  "正在抓取大菇資料...";
 
 
   button.disabled =
@@ -717,155 +763,147 @@ function load(){
 
 
   fetch(
-
     API +
     "?t=" +
     Date.now()
-
   )
 
+  .then(function(r){
 
-  .then(
-    function(r){
+    if(!r.ok){
+
+      throw new Error(
+        "HTTP " +
+        r.status
+      );
+
+    }
+
+    return r.json();
+
+  })
+
+  .then(function(data){
+
+    if(
+      data &&
+      data.success === false
+    ){
+
+      throw new Error(
+        data.error ||
+        "API 回傳失敗"
+      );
+
+    }
 
 
-      if(!r.ok){
+    var found = [];
 
-        throw new Error(
-          "HTTP " +
-          r.status
-        );
+    findMushrooms(
+      data,
+      found
+    );
+
+
+    var seen = {};
+
+
+    mushrooms =
+    found.filter(function(x){
+
+      /*
+      只留下 Level 3
+      */
+
+      if(
+        Number(x.level) !== 3
+      ){
+
+        return false;
 
       }
 
 
-      return r.json();
+      /*
+      去除重複
+      */
 
-    }
-  )
+      var key =
+      String(
 
+        x.id ||
 
-  .then(
-    function(data){
+        (
+          x.lat +
+          "|" +
+          x.lng +
+          "|" +
+          x.type
+        )
 
-
-      var found = [];
-
-
-      findMushrooms(
-        data,
-        found
       );
 
 
-      var seen = {};
+      if(seen[key]){
+
+        return false;
+
+      }
 
 
-      mushrooms =
-      found.filter(
-        function(x){
+      seen[key] =
+      true;
 
 
-          /*
-          Level 3 = 大菇
-          */
+      return true;
 
-          if(
-            Number(x.level) !== 3
-          ){
-
-            return false;
-
-          }
+    });
 
 
-          var key =
-          String(
+    buildTypeMenu();
 
-            x.id ||
-
-            (
-              x.lat +
-              "|" +
-              x.lng +
-              "|" +
-              x.type
-            )
-
-          );
+    buildCountryMenu();
 
 
-          if(seen[key]){
-
-            return false;
-
-          }
-
-
-          seen[key] =
-          true;
+    status.textContent =
+    "抓取成功：API 共讀到 " +
+    found.length +
+    " 筆，目前共有 " +
+    mushrooms.length +
+    " 個 Level 3 大菇";
 
 
-          return true;
+    render();
 
-        }
-      );
+  })
 
+  .catch(function(err){
 
-      buildTypeMenu();
+    status.textContent =
+    "讀取失敗：" +
+    err.message;
 
+  })
 
-      status.textContent =
+  .finally(function(){
 
-      "抓取成功：API 共讀到 " +
+    button.disabled =
+    false;
 
-      found.length +
-
-      " 筆，目前共有 " +
-
-      mushrooms.length +
-
-      " 個 Level 3 大菇";
-
-
-      render();
-
-    }
-  )
-
-
-  .catch(
-    function(err){
-
-
-      status.textContent =
-
-      "讀取失敗：" +
-
-      err.message;
-
-    }
-  )
-
-
-  .finally(
-    function(){
-
-
-      button.disabled =
-      false;
-
-    }
-  );
+  });
 
 }
 
 
 
+/*
+顯示資料
+*/
+
 function render(){
 
   var q =
-
   document
   .getElementById("search")
   .value
@@ -873,37 +911,33 @@ function render(){
   .toLowerCase();
 
 
+  var selectedCountry =
+  document
+  .getElementById("country")
+  .value;
+
 
   var selectedType =
-
   document
   .getElementById("type")
   .value;
 
 
-
   var maxAge =
-
   Number(
-
     document
     .getElementById("age")
     .value
-
   );
 
 
-
   var onlyJoinable =
-
   document
   .getElementById("join")
   .checked;
 
 
-
   var sort =
-
   document
   .getElementById("sort")
   .value;
@@ -911,148 +945,181 @@ function render(){
 
 
   var list =
-
-  mushrooms.filter(
-    function(x){
+  mushrooms.filter(function(x){
 
 
-      if(
-
-        selectedType &&
-
-        String(x.type) !==
-        selectedType
-
-      ){
-
-        return false;
-
-      }
-
-
-
-      var country =
-
+    var country =
+    String(
       x.location_country ||
-
       x.country ||
+      ""
+    ).trim();
 
-      "";
 
-
-
-      var city =
-
+    var city =
+    String(
       x.location_city ||
-
       x.city ||
-
-      "";
-
-
-
-      var text =
-
-      (
-
-        country +
-
-        " " +
-
-        city +
-
-        " " +
-
-        getName(x)
-
-      ).toLowerCase();
+      ""
+    ).trim();
 
 
+    /*
+    國家篩選
+    */
 
-      if(
+    if(
+      selectedCountry &&
+      country !== selectedCountry
+    ){
 
-        q &&
-
-        text.indexOf(q) === -1
-
-      ){
-
-        return false;
-
-      }
-
-
-
-      var scanTime =
-      getScanTime(x);
-
-
-
-      if(maxAge > 0){
-
-        var old =
-        minutesOld(
-          scanTime
-        );
-
-
-        if(old > maxAge){
-
-          return false;
-
-        }
-
-      }
-
-
-
-      if(onlyJoinable){
-
-        var people =
-        getPeople(x);
-
-
-        var max =
-        getCapacity(x);
-
-
-        if(
-
-          max > 0 &&
-
-          people >= max
-
-        ){
-
-          return false;
-
-        }
-
-      }
-
-
-      return true;
+      return false;
 
     }
-  );
 
 
+    /*
+    大菇種類
+    */
 
-  if(sort === "people"){
+    if(
+      selectedType &&
+      String(x.type) !==
+      selectedType
+    ){
 
-    list.sort(
-      function(a,b){
+      return false;
 
-        return (
+    }
 
-          getPeople(a) -
 
-          getPeople(b)
+    /*
+    關鍵字搜尋
+    */
 
-        );
+    var text =
+    (
+      country +
+      " " +
+      city +
+      " " +
+      getName(x)
+    ).toLowerCase();
+
+
+    if(
+      q &&
+      text.indexOf(q) === -1
+    ){
+
+      return false;
+
+    }
+
+
+    /*
+    掃描時間
+    */
+
+    var scanTime =
+    getScanTime(x);
+
+
+    if(maxAge > 0){
+
+      var old =
+      minutesOld(scanTime);
+
+
+      if(old > maxAge){
+
+        return false;
 
       }
-    );
+
+    }
+
+
+    /*
+    只看仍可加入
+    */
+
+    if(onlyJoinable){
+
+      var people =
+      getPeople(x);
+
+      var max =
+      getCapacity(x);
+
+
+      if(
+        max > 0 &&
+        people >= max
+      ){
+
+        return false;
+
+      }
+
+    }
+
+
+    /*
+    ★ 新增：
+    只顯示戰鬥人數 0
+    */
+
+    if(
+      sort === "zero" &&
+      getPeople(x) !== 0
+    ){
+
+      return false;
+
+    }
+
+
+    return true;
+
+  });
+
+
+
+  /*
+  排序
+  */
+
+  if(
+    sort === "people" ||
+    sort === "zero"
+  ){
+
+    list.sort(function(a,b){
+
+      var peopleDiff =
+      getPeople(a) -
+      getPeople(b);
+
+
+      if(peopleDiff !== 0){
+
+        return peopleDiff;
+
+      }
+
+
+      /*
+      同樣人數時
+      最新掃描放前面
+      */
+
+      return (
+        getScanTime(b) -
+        getScanTime(a)
+      );
+
+    });
 
   }
 
@@ -1061,60 +1128,42 @@ function render(){
     sort === "peopleHigh"
   ){
 
-    list.sort(
-      function(a,b){
+    list.sort(function(a,b){
 
-        return (
+      return (
+        getPeople(b) -
+        getPeople(a)
+      );
 
-          getPeople(b) -
-
-          getPeople(a)
-
-        );
-
-      }
-    );
+    });
 
   }
 
 
   else{
 
-    list.sort(
-      function(a,b){
+    list.sort(function(a,b){
 
-        return (
+      return (
+        getScanTime(b) -
+        getScanTime(a)
+      );
 
-          getScanTime(b) -
-
-          getScanTime(a)
-
-        );
-
-      }
-    );
+    });
 
   }
 
 
 
   var result =
-  document.getElementById(
-    "result"
-  );
-
+  document.getElementById("result");
 
 
   result.innerHTML =
-
   '<div class="box summary">' +
-
   '🍄 目前符合條件：' +
-
   list.length +
-
   ' 個大菇' +
-
   '</div>';
 
 
@@ -1122,13 +1171,9 @@ function render(){
   if(list.length === 0){
 
     result.innerHTML +=
-
     '<div class="box">' +
-
     '目前沒有符合條件的大菇。' +
-
     '</div>';
-
 
     return;
 
@@ -1138,266 +1183,183 @@ function render(){
 
   list
   .slice(0,300)
-  .forEach(
-    function(x){
+  .forEach(function(x){
 
 
-      var people =
-      getPeople(x);
+    var people =
+    getPeople(x);
 
 
-      var max =
-      getCapacity(x);
+    var max =
+    getCapacity(x);
 
 
-      var peopleText;
+    var peopleText =
+    max > 0
+    ?
+    people + " / " + max
+    :
+    String(people);
 
 
-      if(max > 0){
 
-        peopleText =
+    var country =
+    x.location_country ||
+    x.country ||
+    "";
 
-        people +
 
-        " / " +
+    var city =
+    x.location_city ||
+    x.city ||
+    "";
 
-        max;
 
-      }
+    var location =
+    (
+      country +
+      " " +
+      city
+    ).trim();
 
-      else{
 
-        peopleText =
-        String(people);
+    if(!location){
 
-      }
-
-
-
-      var country =
-
-      x.location_country ||
-
-      x.country ||
-
-      "";
-
-
-
-      var city =
-
-      x.location_city ||
-
-      x.city ||
-
-      "";
-
-
-
-      var location =
-
-      (
-
-        country +
-
-        " " +
-
-        city
-
-      ).trim();
-
-
-
-      if(!location){
-
-        location =
-        "位置未知";
-
-      }
-
-
-
-      var scanTime =
-      getScanTime(x);
-
-
-
-      var old =
-      minutesOld(
-        scanTime
-      );
-
-
-
-      var gps =
-
-      Number(x.lat) +
-
-      "," +
-
-      Number(x.lng);
-
-
-
-      var map =
-
-      "https://www.google.com/maps?q=" +
-
-      encodeURIComponent(
-        gps
-      );
-
-
-
-      var warning =
-      "";
-
-
-      if(old > 60){
-
-        warning =
-
-        '<div class="warning">' +
-
-        '⚠️ 此資料已超過 1 小時，戰鬥人數可能已經改變。' +
-
-        '</div>';
-
-      }
-
-
-
-      var card =
-
-      document.createElement(
-        "div"
-      );
-
-
-      card.className =
-      "card";
-
-
-
-      card.innerHTML =
-
-
-      '<div class="name">' +
-
-      esc(
-        getName(x)
-      ) +
-
-      '</div>' +
-
-
-      '<div class="people">' +
-
-      '👥 最後掃描戰鬥人數：' +
-
-      esc(
-        peopleText
-      ) +
-
-      '</div>' +
-
-
-      '<div class="info">' +
-
-      '📍 ' +
-
-      esc(
-        location
-      ) +
-
-      '</div>' +
-
-
-      '<div class="info">' +
-
-      '⚔️ 總戰力：' +
-
-      esc(
-        x.total_power || 0
-      ) +
-
-      '</div>' +
-
-
-      '<div class="info ' +
-
-      ageClass(
-        scanTime
-      ) +
-
-      '">' +
-
-      '🔄 最新掃描時間：' +
-
-      esc(
-        timeText(
-          scanTime
-        )
-      ) +
-
-      '</div>' +
-
-
-      '<div class="info ' +
-
-      ageClass(
-        scanTime
-      ) +
-
-      '">' +
-
-      '⏱️ ' +
-
-      esc(
-        ageText(
-          scanTime
-        )
-      ) +
-
-      '</div>' +
-
-
-      warning +
-
-
-      '<div class="info">' +
-
-      '📌 GPS：' +
-
-      esc(
-        gps
-      ) +
-
-      '</div>' +
-
-
-      '<a class="map" href="' +
-
-      esc(
-        map
-      ) +
-
-      '" target="_blank" ' +
-
-      'rel="noopener noreferrer">' +
-
-      '📍 Google 地圖' +
-
-      '</a>';
-
-
-
-      result.appendChild(
-        card
-      );
+      location =
+      "位置未知";
 
     }
-  );
+
+
+
+    var scanTime =
+    getScanTime(x);
+
+
+    var old =
+    minutesOld(scanTime);
+
+
+    var gps =
+    Number(x.lat) +
+    "," +
+    Number(x.lng);
+
+
+    var map =
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent(gps);
+
+
+
+    var warning = "";
+
+
+    if(old > 60){
+
+      warning =
+      '<div class="warning">' +
+      '⚠️ 此資料已超過 1 小時，戰鬥人數可能已經改變。' +
+      '</div>';
+
+    }
+
+
+
+    var peopleClass =
+    people === 0
+    ?
+    "people zero"
+    :
+    "people";
+
+
+
+    var card =
+    document.createElement("div");
+
+
+    card.className =
+    "card";
+
+
+    card.innerHTML =
+
+    '<div class="name">' +
+    esc(getName(x)) +
+    '</div>' +
+
+
+    '<div class="' +
+    peopleClass +
+    '">' +
+
+    '👥 最後掃描戰鬥人數：' +
+    esc(peopleText) +
+
+    '</div>' +
+
+
+    '<div class="info">' +
+    '📍 ' +
+    esc(location) +
+    '</div>' +
+
+
+    '<div class="info">' +
+    '⚔️ 總戰力：' +
+    esc(x.total_power || 0) +
+    '</div>' +
+
+
+    '<div class="info ' +
+    ageClass(scanTime) +
+    '">' +
+
+    '🔄 最新掃描時間：' +
+    esc(timeText(scanTime)) +
+
+    '</div>' +
+
+
+    '<div class="info ' +
+    ageClass(scanTime) +
+    '">' +
+
+    '⏱️ ' +
+    esc(ageText(scanTime)) +
+
+    '</div>' +
+
+
+    warning +
+
+
+    '<div class="info">' +
+
+    '📌 GPS：' +
+    esc(gps) +
+
+    '</div>' +
+
+
+    '<a class="map" ' +
+
+    'href="' +
+    esc(map) +
+    '" ' +
+
+    'target="_blank" ' +
+    'rel="noopener noreferrer">' +
+
+    '📍 Google 地圖' +
+
+    '</a>';
+
+
+    result.appendChild(card);
+
+  });
 
 
 
@@ -1410,10 +1372,8 @@ function render(){
       '<div class="box">' +
 
       '符合條件共有 ' +
-
       list.length +
-
-      ' 筆，目前先顯示最新排序的前 300 筆。' +
+      ' 筆，目前先顯示前 300 筆。' +
 
       '</div>'
 
@@ -1424,6 +1384,10 @@ function render(){
 }
 
 
+
+/*
+按鈕 / 選單事件
+*/
 
 document
 .getElementById("reload")
@@ -1437,6 +1401,14 @@ document
 .getElementById("search")
 .addEventListener(
   "input",
+  render
+);
+
+
+document
+.getElementById("country")
+.addEventListener(
+  "change",
   render
 );
 
@@ -1473,12 +1445,8 @@ document
 );
 
 
-/*
-開啟網站後自動抓取
-*/
 
 load();
-
 
 </script>
 
