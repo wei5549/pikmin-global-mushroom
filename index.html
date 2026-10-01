@@ -4,17 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Pikmin 全球大菇雷達</title>
+<title>Pikmin 全球雷達</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
   background:#0d1117;
-  color:white;
+  color:#fff;
   font-family:Arial,"Noto Sans TC",sans-serif;
 }
 
@@ -43,9 +41,7 @@ h1{
   border:1px solid #30363d;
 }
 
-input,
-select,
-button{
+input,select,button{
   width:100%;
   padding:13px;
   margin:5px 0;
@@ -113,7 +109,7 @@ button:disabled{
   margin:10px 0;
 }
 
-.zero{
+.people.zero{
   background:#17351f;
 }
 
@@ -123,17 +119,9 @@ button:disabled{
   line-height:1.5;
 }
 
-.fresh{
-  color:#79e08f;
-}
-
-.old{
-  color:#ffb454;
-}
-
-.veryold{
-  color:#ff7b72;
-}
+.fresh{color:#79e08f}
+.old{color:#ffb454}
+.veryold{color:#ff7b72}
 
 .warning{
   margin-top:9px;
@@ -153,11 +141,6 @@ button:disabled{
   text-decoration:none;
   font-weight:bold;
 }
-
-.small{
-  color:#8b949e;
-  font-size:14px;
-}
 </style>
 </head>
 
@@ -172,8 +155,42 @@ button:disabled{
 戰鬥人數為「最後一次掃描時」的紀錄，不代表遊戲目前即時人數。
 </div>
 
-
 <div class="box">
+
+<!-- 地區 -->
+<select id="region">
+  <option value="">🌏 全球・目前掃描資料</option>
+
+  <optgroup label="亞洲">
+    <option value="india">🇮🇳 印度</option>
+    <option value="vietnam">🇻🇳 越南</option>
+    <option value="indonesia">🇮🇩 印尼</option>
+    <option value="philippines">🇵🇭 菲律賓</option>
+    <option value="malaysia">🇲🇾 馬來西亞</option>
+    <option value="singapore">🇸🇬 新加坡</option>
+    <option value="thailand">🇹🇭 泰國</option>
+  </optgroup>
+
+  <optgroup label="中東">
+    <option value="uae">🇦🇪 阿拉伯聯合大公國</option>
+    <option value="saudi">🇸🇦 沙烏地阿拉伯</option>
+    <option value="qatar">🇶🇦 卡達</option>
+    <option value="kuwait">🇰🇼 科威特</option>
+    <option value="bahrain">🇧🇭 巴林</option>
+    <option value="oman">🇴🇲 阿曼</option>
+  </optgroup>
+
+  <optgroup label="大洋洲">
+    <option value="australia">🇦🇺 澳洲</option>
+    <option value="newzealand">🇳🇿 紐西蘭</option>
+  </optgroup>
+
+  <optgroup label="北美">
+    <option value="usa">🇺🇸 美國</option>
+    <option value="canada">🇨🇦 加拿大</option>
+  </optgroup>
+</select>
+
 
 <input
   id="search"
@@ -181,13 +198,7 @@ button:disabled{
   placeholder="🔎 搜尋國家、城市">
 
 
-<!-- 地區 -->
-<select id="country">
-  <option value="">🌏 全部地區</option>
-</select>
-
-
-<!-- 大菇種類 -->
+<!-- 大菇 -->
 <select id="type">
   <option value="">🍄 全部大菇</option>
 </select>
@@ -196,69 +207,63 @@ button:disabled{
 <!-- 掃描時間 -->
 <select id="age">
 
-<option value="0">
-🕒 全部掃描時間
-</option>
+  <option value="0">
+    🕒 全部掃描時間
+  </option>
 
-<option value="10">
-🟢 10 分鐘內
-</option>
+  <option value="10">
+    🟢 10 分鐘內
+  </option>
 
-<option value="30">
-🟢 30 分鐘內
-</option>
+  <option value="30">
+    🟢 30 分鐘內
+  </option>
 
-<option value="60">
-🕒 1 小時內
-</option>
+  <option value="60">
+    🕒 1 小時內
+  </option>
 
-<option value="180">
-🕒 3 小時內
-</option>
+  <option value="180">
+    🕒 3 小時內
+  </option>
 
-<option value="1440">
-📅 24 小時內
-</option>
+  <option value="1440">
+    📅 24 小時內
+  </option>
 
 </select>
 
 
-<!-- 排序 / 人數 -->
+<!-- 人數 / 排序 -->
 <select id="sort">
 
-<option value="new">
-🕒 最新掃描時間
-</option>
+  <option value="new">
+    🕒 最新掃描時間
+  </option>
 
-<option value="zero">
-👤 戰鬥人數 0
-</option>
+  <option value="zero">
+    👤 戰鬥人數 0
+  </option>
 
-<option value="people">
-👥 戰鬥人數最少
-</option>
+  <option value="people">
+    👥 戰鬥人數最少
+  </option>
 
-<option value="peopleHigh">
-👥 戰鬥人數最多
-</option>
+  <option value="peopleHigh">
+    👥 戰鬥人數最多
+  </option>
 
 </select>
 
 
 <label class="check">
-
-<input
-  id="join"
-  type="checkbox"
-  checked>
-
-只顯示最後掃描時還能加入
-
+  <input id="join" type="checkbox" checked>
+  只顯示最後掃描時還能加入
 </label>
 
 
 <button id="reload">
-🔄 重新抓取資料
+  🔄 重新抓取資料
 </button>
 
 
@@ -271,54 +276,120 @@ button:disabled{
 
 <div id="result"></div>
 
-
 </main>
 
 
 <script>
 
-var API =
+const API =
 "https://late-glade-6923.awho86958.workers.dev";
 
 
-var mushrooms = [];
+/*
+各地區 bbox
+
+格式：
+西經度,南緯度,東經度,北緯度
+*/
+
+const REGIONS = {
+
+  india:
+  "68,6,98,36",
+
+  vietnam:
+  "102,8,110,24",
+
+  indonesia:
+  "94,-12,142,7",
+
+  philippines:
+  "116,4,127,22",
+
+  malaysia:
+  "99,0,120,8",
+
+  singapore:
+  "103.5,1.1,104.1,1.6",
+
+  thailand:
+  "97,5,106,21",
 
 
-var names = {
+  uae:
+  "51,22,57,27",
 
-2:"🔴 大紅菇",
+  saudi:
+  "34,16,56,33",
 
-3:"🩶 大灰菇",
+  qatar:
+  "50.7,24.3,52,26.3",
 
-5:"🔵 大藍菇",
+  kuwait:
+  "46.4,28.3,49,30.3",
 
-6:"🟡 大黃菇",
+  bahrain:
+  "50.3,25.5,50.9,26.5",
 
-7:"⚪ 大白菇",
+  oman:
+  "51.5,16,60,27",
 
-8:"🟣 大紫菇",
 
-9:"🌸 大粉菇",
+  australia:
+  "112,-44,154,-10",
 
-11:"🔥 大火菇",
+  newzealand:
+  "165,-48,179,-33",
 
-12:"💧 大水菇",
 
-13:"💎 大水晶菇",
+  usa:
+  "-125,24,-66,50",
 
-17:"⚡ 大電菇",
-
-18:"☠️ 大毒菇",
-
-26:"🧊 大冰藍菇"
+  canada:
+  "-141,41,-52,84"
 
 };
 
 
+const NAMES = {
+
+  2:"🔴 大紅菇",
+
+  3:"🩶 大灰菇",
+
+  5:"🔵 大藍菇",
+
+  6:"🟡 大黃菇",
+
+  7:"⚪ 大白菇",
+
+  8:"🟣 大紫菇",
+
+  9:"🌸 大粉菇",
+
+  11:"🔥 大火菇",
+
+  12:"💧 大水菇",
+
+  13:"💎 大水晶菇",
+
+  17:"⚡ 大電菇",
+
+  18:"☠️ 大毒菇",
+
+  26:"🧊 大冰藍菇"
+
+};
+
+
+let mushrooms = [];
+
+
+/* 防止 HTML 注入 */
 
 function esc(v){
 
-  var d =
+  const d =
   document.createElement("div");
 
   d.textContent =
@@ -329,54 +400,7 @@ function esc(v){
 }
 
 
-
-function findMushrooms(obj,out){
-
-  if(!obj){
-    return;
-  }
-
-  if(Array.isArray(obj)){
-
-    obj.forEach(function(x){
-
-      findMushrooms(x,out);
-
-    });
-
-    return;
-
-  }
-
-  if(typeof obj !== "object"){
-    return;
-  }
-
-  if(
-    obj.level !== undefined &&
-    obj.type !== undefined &&
-    obj.lat !== undefined &&
-    obj.lng !== undefined
-  ){
-
-    out.push(obj);
-
-    return;
-
-  }
-
-  Object.keys(obj).forEach(function(k){
-
-    findMushrooms(
-      obj[k],
-      out
-    );
-
-  });
-
-}
-
-
+/* 戰鬥人數 */
 
 function getPeople(x){
 
@@ -390,6 +414,7 @@ function getPeople(x){
 }
 
 
+/* 最大人數 */
 
 function getCapacity(x){
 
@@ -403,16 +428,7 @@ function getCapacity(x){
 }
 
 
-
-/*
-掃描時間
-
-這裡故意使用 ||
-因為有些資料欄位會是 0。
-
-如果使用 ??
-遇到 0 就不會繼續找下一個時間。
-*/
+/* 最新掃描時間 */
 
 function getScanTime(x){
 
@@ -433,40 +449,34 @@ function getScanTime(x){
 }
 
 
+/* 大菇名稱 */
 
 function getName(x){
 
-  var t =
+  const t =
   Number(x.type);
 
-  if(names[t]){
-    return names[t];
-  }
-
-  return "🍄 大菇 Type " + t;
+  return (
+    NAMES[t] ||
+    "🍄 大菇 Type " + t
+  );
 
 }
 
 
+/* 秒 / 毫秒處理 */
 
 function toMilliseconds(v){
 
-  var n =
+  let n =
   Number(v);
 
   if(!n){
     return 0;
   }
 
-  /*
-  秒 → 毫秒
-  */
-
   if(n < 100000000000){
-
-    n =
-    n * 1000;
-
+    n *= 1000;
   }
 
   return n;
@@ -474,17 +484,18 @@ function toMilliseconds(v){
 }
 
 
+/* 完整時間 */
 
 function timeText(v){
 
-  var n =
+  const n =
   toMilliseconds(v);
 
   if(!n){
     return "未知";
   }
 
-  var d =
+  const d =
   new Date(n);
 
   if(isNaN(d.getTime())){
@@ -501,10 +512,11 @@ function timeText(v){
 }
 
 
+/* 幾分鐘前 */
 
 function minutesOld(v){
 
-  var n =
+  const n =
   toMilliseconds(v);
 
   if(!n){
@@ -518,10 +530,11 @@ function minutesOld(v){
 }
 
 
+/* 相對時間 */
 
 function ageText(v){
 
-  var m =
+  const m =
   minutesOld(v);
 
   if(!isFinite(m)){
@@ -537,35 +550,26 @@ function ageText(v){
   }
 
   if(m < 60){
-
-    return (
-      Math.floor(m) +
-      " 分鐘前"
-    );
-
+    return Math.floor(m) +
+    " 分鐘前";
   }
 
   if(m < 1440){
-
-    return (
-      Math.floor(m / 60) +
-      " 小時前"
-    );
-
+    return Math.floor(m / 60) +
+    " 小時前";
   }
 
-  return (
-    Math.floor(m / 1440) +
-    " 天前"
-  );
+  return Math.floor(m / 1440) +
+  " 天前";
 
 }
 
 
+/* 時間顏色 */
 
 function ageClass(v){
 
-  var m =
+  const m =
   minutesOld(v);
 
   if(m <= 30){
@@ -581,42 +585,33 @@ function ageClass(v){
 }
 
 
-
-/*
-建立大菇種類選單
-*/
+/* 建立菇種選單 */
 
 function buildTypeMenu(){
 
-  var select =
+  const select =
   document.getElementById("type");
 
-  var current =
+  const current =
   select.value;
 
-  var types = [];
+  const types = [];
 
 
   mushrooms.forEach(function(x){
 
-    var t =
+    const t =
     Number(x.type);
 
-    if(
-      types.indexOf(t) === -1
-    ){
-
+    if(!types.includes(t)){
       types.push(t);
-
     }
 
   });
 
 
   types.sort(function(a,b){
-
-    return a - b;
-
+    return a-b;
   });
 
 
@@ -626,210 +621,162 @@ function buildTypeMenu(){
 
   types.forEach(function(t){
 
-    var option =
+    const option =
     document.createElement("option");
 
     option.value =
     String(t);
 
     option.textContent =
-    names[t] ||
-    ("🍄 大菇 Type " + t);
+    NAMES[t] ||
+    "🍄 大菇 Type " + t;
 
     select.appendChild(option);
 
   });
 
 
-  select.value =
-  current;
-
-}
-
-
-
-/*
-建立國家 / 地區選單
-*/
-
-function buildCountryMenu(){
-
-  var select =
-  document.getElementById("country");
-
-  var current =
-  select.value;
-
-  var countries = [];
-
-
-  mushrooms.forEach(function(x){
-
-    var country =
-    String(
-      x.location_country ||
-      x.country ||
-      ""
-    ).trim();
-
-
-    if(
-      country &&
-      countries.indexOf(country) === -1
-    ){
-
-      countries.push(country);
-
-    }
-
-  });
-
-
-  countries.sort(function(a,b){
-
-    return a.localeCompare(
-      b,
-      "zh-Hant"
-    );
-
-  });
-
-
-  select.innerHTML =
-  '<option value="">🌏 全部地區</option>';
-
-
-  countries.forEach(function(country){
-
-    var option =
-    document.createElement("option");
-
-    option.value =
-    country;
-
-    option.textContent =
-    "🌏 " + country;
-
-    select.appendChild(option);
-
-  });
-
-
-  /*
-  如果重新抓取後
-  原本選擇的國家仍存在
-  就保持選擇
-  */
-
-  var exists =
-  Array.from(select.options)
-  .some(function(o){
-
-    return o.value === current;
-
-  });
-
-
-  if(exists){
-
+  if(
+    Array.from(select.options)
+    .some(o => o.value === current)
+  ){
     select.value =
     current;
-
   }
 
 }
 
 
+/* 建立 Worker 網址 */
 
-/*
-抓取資料
-*/
+function buildApiUrl(){
 
-function load(){
+  const region =
+  document
+  .getElementById("region")
+  .value;
 
-  var status =
+
+  let url =
+  API +
+  "?t=" +
+  Date.now();
+
+
+  if(
+    region &&
+    REGIONS[region]
+  ){
+
+    url +=
+    "&bbox=" +
+    encodeURIComponent(
+      REGIONS[region]
+    );
+
+  }
+
+
+  return url;
+
+}
+
+
+/* 抓資料 */
+
+async function load(){
+
+  const status =
   document.getElementById("status");
 
-  var button =
+  const button =
   document.getElementById("reload");
+
+  const regionSelect =
+  document.getElementById("region");
+
+  const regionName =
+  regionSelect.options[
+    regionSelect.selectedIndex
+  ].textContent;
 
 
   status.textContent =
-  "正在抓取大菇資料...";
+  "正在抓取 " +
+  regionName +
+  " 的大菇資料...";
 
 
   button.disabled =
   true;
 
 
-  fetch(
-    API +
-    "?t=" +
-    Date.now()
-  )
+  try {
 
-  .then(function(r){
+    const response =
+    await fetch(
+      buildApiUrl(),
+      {
+        cache:"no-store"
+      }
+    );
 
-    if(!r.ok){
+
+    if(!response.ok){
 
       throw new Error(
         "HTTP " +
-        r.status
+        response.status
       );
 
     }
 
-    return r.json();
 
-  })
+    const data =
+    await response.json();
 
-  .then(function(data){
 
     if(
-      data &&
-      data.success === false
+      !data ||
+      data.success !== true
     ){
 
       throw new Error(
-        data.error ||
+        data?.error ||
         "API 回傳失敗"
       );
 
     }
 
 
-    var found = [];
+    const source =
+    Array.isArray(data.mushrooms)
+    ?
+    data.mushrooms
+    :
+    [];
 
-    findMushrooms(
-      data,
-      found
-    );
 
-
-    var seen = {};
+    const seen =
+    new Set();
 
 
     mushrooms =
-    found.filter(function(x){
+    source.filter(function(x){
 
       /*
-      只留下 Level 3
+      Worker 已經篩 Level 3，
+      這裡再保險一次。
       */
 
       if(
         Number(x.level) !== 3
       ){
-
         return false;
-
       }
 
 
-      /*
-      去除重複
-      */
-
-      var key =
+      const key =
       String(
 
         x.id ||
@@ -845,16 +792,12 @@ function load(){
       );
 
 
-      if(seen[key]){
-
+      if(seen.has(key)){
         return false;
-
       }
 
 
-      seen[key] =
-      true;
-
+      seen.add(key);
 
       return true;
 
@@ -863,47 +806,54 @@ function load(){
 
     buildTypeMenu();
 
-    buildCountryMenu();
-
 
     status.textContent =
-    "抓取成功：API 共讀到 " +
-    found.length +
-    " 筆，目前共有 " +
+    "抓取成功：" +
+    regionName +
+    "・" +
+    data.pages_fetched +
+    " 頁・" +
     mushrooms.length +
     " 個 Level 3 大菇";
 
 
     render();
 
-  })
+  }
 
-  .catch(function(err){
+  catch(err){
+
+    mushrooms = [];
+
+    document
+    .getElementById("result")
+    .innerHTML = "";
+
 
     status.textContent =
     "讀取失敗：" +
-    err.message;
+    (
+      err?.message ||
+      String(err)
+    );
 
-  })
+  }
 
-  .finally(function(){
+  finally{
 
     button.disabled =
     false;
 
-  });
+  }
 
 }
 
 
-
-/*
-顯示資料
-*/
+/* 顯示結果 */
 
 function render(){
 
-  var q =
+  const q =
   document
   .getElementById("search")
   .value
@@ -911,19 +861,13 @@ function render(){
   .toLowerCase();
 
 
-  var selectedCountry =
-  document
-  .getElementById("country")
-  .value;
-
-
-  var selectedType =
+  const selectedType =
   document
   .getElementById("type")
   .value;
 
 
-  var maxAge =
+  const maxAge =
   Number(
     document
     .getElementById("age")
@@ -931,73 +875,52 @@ function render(){
   );
 
 
-  var onlyJoinable =
-  document
-  .getElementById("join")
-  .checked;
-
-
-  var sort =
+  const sort =
   document
   .getElementById("sort")
   .value;
 
 
+  const onlyJoinable =
+  document
+  .getElementById("join")
+  .checked;
 
-  var list =
+
+  let list =
   mushrooms.filter(function(x){
 
 
-    var country =
-    String(
-      x.location_country ||
-      x.country ||
-      ""
-    ).trim();
-
-
-    var city =
-    String(
-      x.location_city ||
-      x.city ||
-      ""
-    ).trim();
-
-
-    /*
-    國家篩選
-    */
-
-    if(
-      selectedCountry &&
-      country !== selectedCountry
-    ){
-
-      return false;
-
-    }
-
-
-    /*
-    大菇種類
-    */
+    /* 菇種 */
 
     if(
       selectedType &&
       String(x.type) !==
       selectedType
     ){
-
       return false;
-
     }
 
 
-    /*
-    關鍵字搜尋
-    */
+    const country =
+    String(
+      x.location_country ||
+      x.country ||
+      ""
+    );
 
-    var text =
+
+    const city =
+    String(
+      x.location_city ||
+      x.city ||
+      ""
+    );
+
+
+    /* 搜尋 */
+
+    const text =
     (
       country +
       " " +
@@ -1009,47 +932,38 @@ function render(){
 
     if(
       q &&
-      text.indexOf(q) === -1
+      !text.includes(q)
     ){
-
       return false;
-
     }
 
 
-    /*
-    掃描時間
-    */
+    /* 掃描時間 */
 
-    var scanTime =
+    const scanTime =
     getScanTime(x);
 
 
     if(maxAge > 0){
 
-      var old =
-      minutesOld(scanTime);
-
-
-      if(old > maxAge){
-
+      if(
+        minutesOld(scanTime) >
+        maxAge
+      ){
         return false;
-
       }
 
     }
 
 
-    /*
-    只看仍可加入
-    */
+    /* 還能加入 */
 
     if(onlyJoinable){
 
-      var people =
+      const people =
       getPeople(x);
 
-      var max =
+      const max =
       getCapacity(x);
 
 
@@ -1057,26 +971,19 @@ function render(){
         max > 0 &&
         people >= max
       ){
-
         return false;
-
       }
 
     }
 
 
-    /*
-    ★ 新增：
-    只顯示戰鬥人數 0
-    */
+    /* 只顯示 0 人 */
 
     if(
       sort === "zero" &&
       getPeople(x) !== 0
     ){
-
       return false;
-
     }
 
 
@@ -1085,10 +992,7 @@ function render(){
   });
 
 
-
-  /*
-  排序
-  */
+  /* 排序 */
 
   if(
     sort === "people" ||
@@ -1097,22 +1001,13 @@ function render(){
 
     list.sort(function(a,b){
 
-      var peopleDiff =
+      const diff =
       getPeople(a) -
       getPeople(b);
 
-
-      if(peopleDiff !== 0){
-
-        return peopleDiff;
-
+      if(diff !== 0){
+        return diff;
       }
-
-
-      /*
-      同樣人數時
-      最新掃描放前面
-      */
 
       return (
         getScanTime(b) -
@@ -1123,22 +1018,28 @@ function render(){
 
   }
 
-
   else if(
     sort === "peopleHigh"
   ){
 
     list.sort(function(a,b){
 
+      const diff =
+      getPeople(b) -
+      getPeople(a);
+
+      if(diff !== 0){
+        return diff;
+      }
+
       return (
-        getPeople(b) -
-        getPeople(a)
+        getScanTime(b) -
+        getScanTime(a)
       );
 
     });
 
   }
-
 
   else{
 
@@ -1154,8 +1055,7 @@ function render(){
   }
 
 
-
-  var result =
+  const result =
   document.getElementById("result");
 
 
@@ -1165,7 +1065,6 @@ function render(){
   list.length +
   ' 個大菇' +
   '</div>';
-
 
 
   if(list.length === 0){
@@ -1180,21 +1079,20 @@ function render(){
   }
 
 
-
   list
   .slice(0,300)
   .forEach(function(x){
 
 
-    var people =
+    const people =
     getPeople(x);
 
 
-    var max =
+    const max =
     getCapacity(x);
 
 
-    var peopleText =
+    const peopleText =
     max > 0
     ?
     people + " / " + max
@@ -1202,57 +1100,47 @@ function render(){
     String(people);
 
 
-
-    var country =
+    const country =
     x.location_country ||
     x.country ||
     "";
 
 
-    var city =
+    const city =
     x.location_city ||
     x.city ||
     "";
 
 
-    var location =
+    const location =
     (
       country +
       " " +
       city
-    ).trim();
+    ).trim() ||
+    "位置未知";
 
 
-    if(!location){
-
-      location =
-      "位置未知";
-
-    }
-
-
-
-    var scanTime =
+    const scanTime =
     getScanTime(x);
 
 
-    var old =
+    const old =
     minutesOld(scanTime);
 
 
-    var gps =
+    const gps =
     Number(x.lat) +
     "," +
     Number(x.lng);
 
 
-    var map =
+    const map =
     "https://www.google.com/maps?q=" +
     encodeURIComponent(gps);
 
 
-
-    var warning = "";
+    let warning = "";
 
 
     if(old > 60){
@@ -1265,8 +1153,7 @@ function render(){
     }
 
 
-
-    var peopleClass =
+    const peopleClass =
     people === 0
     ?
     "people zero"
@@ -1274,8 +1161,7 @@ function render(){
     "people";
 
 
-
-    var card =
+    const card =
     document.createElement("div");
 
 
@@ -1289,7 +1175,6 @@ function render(){
     esc(getName(x)) +
     '</div>' +
 
-
     '<div class="' +
     peopleClass +
     '">' +
@@ -1299,18 +1184,15 @@ function render(){
 
     '</div>' +
 
-
     '<div class="info">' +
     '📍 ' +
     esc(location) +
     '</div>' +
 
-
     '<div class="info">' +
     '⚔️ 總戰力：' +
     esc(x.total_power || 0) +
     '</div>' +
-
 
     '<div class="info ' +
     ageClass(scanTime) +
@@ -1321,7 +1203,6 @@ function render(){
 
     '</div>' +
 
-
     '<div class="info ' +
     ageClass(scanTime) +
     '">' +
@@ -1331,29 +1212,20 @@ function render(){
 
     '</div>' +
 
-
     warning +
 
-
     '<div class="info">' +
-
     '📌 GPS：' +
     esc(gps) +
-
     '</div>' +
 
-
     '<a class="map" ' +
-
     'href="' +
     esc(map) +
     '" ' +
-
     'target="_blank" ' +
     'rel="noopener noreferrer">' +
-
     '📍 Google 地圖' +
-
     '</a>';
 
 
@@ -1362,21 +1234,16 @@ function render(){
   });
 
 
-
   if(list.length > 300){
 
     result.insertAdjacentHTML(
-
       "beforeend",
 
       '<div class="box">' +
-
       '符合條件共有 ' +
       list.length +
-      ' 筆，目前先顯示前 300 筆。' +
-
+      ' 筆，目前顯示前 300 筆。' +
       '</div>'
-
     );
 
   }
@@ -1384,10 +1251,18 @@ function render(){
 }
 
 
-
 /*
-按鈕 / 選單事件
+切換地區：
+直接重新向 Worker 抓資料
 */
+
+document
+.getElementById("region")
+.addEventListener(
+  "change",
+  load
+);
+
 
 document
 .getElementById("reload")
@@ -1401,14 +1276,6 @@ document
 .getElementById("search")
 .addEventListener(
   "input",
-  render
-);
-
-
-document
-.getElementById("country")
-.addEventListener(
-  "change",
   render
 );
 
@@ -1445,6 +1312,7 @@ document
 );
 
 
+/* 第一次進網站 */
 
 load();
 
