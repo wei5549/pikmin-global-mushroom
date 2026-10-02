@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hant">
 
 <head>
@@ -107,17 +108,32 @@ button:disabled{
   margin:10px 0;
 }
 
+.card.level4{
+  border:1px solid #d29922;
+}
+
+.levelBadge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:7px;
+  margin-bottom:8px;
+  font-size:14px;
+  font-weight:bold;
+  background:#222b36;
+}
+
+.level4 .levelBadge{
+  background:#493b16;
+  color:#ffd866;
+}
+
 .name{
   font-size:23px;
   font-weight:bold;
   margin-bottom:10px;
 }
 
-.giant{
-  border:1px solid #d29922;
-}
-
-.giant .name{
+.level4 .name{
   color:#ffd866;
 }
 
@@ -186,10 +202,7 @@ button:disabled{
 
 <div class="sub">
 
-公開掃描資料<br>
-
-顯示 Level 3 大菇
-＋ Type 19 / Level 4 巨大活動菇<br>
+公開掃描資料・顯示 Level 3 與 Level 4 蘑菇<br>
 
 戰鬥人數為「最後一次掃描時」的紀錄，
 不代表遊戲目前即時人數。
@@ -307,20 +320,31 @@ button:disabled{
   placeholder="🔎 搜尋國家、城市">
 
 
-<!-- 菇種 -->
+<!-- 等級 -->
+
+<select id="level">
+
+<option value="">
+🍄 Level 3 + Level 4
+</option>
+
+<option value="3">
+🍄 只看 Level 3
+</option>
+
+<option value="4">
+⭐ 只看 Level 4
+</option>
+
+</select>
+
+
+<!-- 菇種類 -->
 
 <select id="type">
 
 <option value="">
-🍄 全部大菇＋巨大活動菇
-</option>
-
-<option value="giant">
-🎉 只看巨大活動菇
-</option>
-
-<option value="large">
-🍄 只看一般大菇
+🍄 全部種類
 </option>
 
 </select>
@@ -357,7 +381,7 @@ button:disabled{
 </select>
 
 
-<!-- 人數 -->
+<!-- 排序 -->
 
 <select id="sort">
 
@@ -424,120 +448,100 @@ const API =
 
 /*
 地區 bbox
-
-西經度,南緯度,東經度,北緯度
 */
 
 const REGIONS = {
 
-
 india:
 "68,6,98,36",
-
 
 vietnam:
 "102,8,110,24",
 
-
 indonesia:
 "94,-12,142,7",
-
 
 philippines:
 "116,4,127,22",
 
-
 malaysia:
 "99,0,120,8",
-
 
 singapore:
 "103.5,1.1,104.1,1.6",
 
-
 thailand:
 "97,5,106,21",
-
-
 
 uae:
 "51,22,57,27",
 
-
 saudi:
 "34,16,56,33",
-
 
 qatar:
 "50.7,24.3,52,26.3",
 
-
 kuwait:
 "46.4,28.3,49,30.3",
-
 
 bahrain:
 "50.3,25.5,50.9,26.5",
 
-
 oman:
 "51.5,16,60,27",
-
-
 
 australia:
 "112,-44,154,-10",
 
-
 newzealand:
 "165,-48,179,-33",
-
-
 
 usa:
 "-125,24,-66,50",
 
-
 canada:
 "-141,41,-52,84"
-
 
 };
 
 
 /*
-一般大菇名稱
+已知 Type 名稱
+
+未知 Type 仍然會顯示，
+不會被排除。
 */
 
 const NAMES = {
 
-2:"🔴 大紅菇",
+2:"🔴 紅菇",
 
-3:"🩶 大灰菇",
+3:"🩶 灰菇",
 
-5:"🔵 大藍菇",
+5:"🔵 藍菇",
 
-6:"🟡 大黃菇",
+6:"🟡 黃菇",
 
-7:"⚪ 大白菇",
+7:"⚪ 白菇",
 
-8:"🟣 大紫菇",
+8:"🟣 紫菇",
 
-9:"🌸 大粉菇",
+9:"🌸 粉菇",
 
-11:"🔥 大火菇",
+11:"🔥 火菇",
 
-12:"💧 大水菇",
+12:"💧 水菇",
 
-13:"💎 大水晶菇",
+13:"💎 水晶菇",
 
-17:"⚡ 大電菇",
+17:"⚡ 電菇",
 
-18:"☠️ 大毒菇",
+18:"☠️ 毒菇",
 
-19:"🎉 巨大活動菇",
+19:"🎉 活動菇",
 
-26:"🧊 大冰藍菇"
+26:"🧊 冰藍菇"
 
 };
 
@@ -557,8 +561,8 @@ function esc(v){
   d.textContent =
     String(
       v == null
-        ? ""
-        : v
+      ? ""
+      : v
     );
 
   return d.innerHTML;
@@ -567,27 +571,17 @@ function esc(v){
 
 
 /*
-是否為巨大活動菇
+只接受 Level 3 / Level 4
 */
 
-function isGiantEvent(x){
+function isWanted(x){
+
+  const level =
+    Number(x.level);
 
   return (
-    Number(x.type) === 19 &&
-    Number(x.level) === 4
-  );
-
-}
-
-
-/*
-是否為一般大菇
-*/
-
-function isLarge(x){
-
-  return (
-    Number(x.level) === 3
+    level === 3 ||
+    level === 4
   );
 
 }
@@ -615,7 +609,7 @@ function getPeople(x){
 
 
 /*
-最大戰鬥人數
+最大人數
 */
 
 function getCapacity(x){
@@ -636,7 +630,7 @@ function getCapacity(x){
 
 
 /*
-最後掃描時間
+掃描時間
 */
 
 function getScanTime(x){
@@ -659,32 +653,112 @@ function getScanTime(x){
 
 
 /*
-菇名稱
+名稱
+
+Level 3：
+大紅菇、大毒菇...
+
+Level 4：
+巨大紅菇、巨大毒菇...
+
+未知 Type：
+大菇 Type XX
+巨大菇 Type XX
 */
 
 function getName(x){
 
-  if(isGiantEvent(x)){
+  const type =
+    Number(x.type);
 
-    return "🎉 巨大活動菇";
+  const level =
+    Number(x.level);
+
+  let base =
+    NAMES[type] ||
+    ("🍄 Type " + type);
+
+
+  /*
+    去掉前面的 emoji，
+    但保留名稱。
+    這裡用已知名稱重新處理。
+  */
+
+  const plainNames = {
+
+    2:"紅菇",
+
+    3:"灰菇",
+
+    5:"藍菇",
+
+    6:"黃菇",
+
+    7:"白菇",
+
+    8:"紫菇",
+
+    9:"粉菇",
+
+    11:"火菇",
+
+    12:"水菇",
+
+    13:"水晶菇",
+
+    17:"電菇",
+
+    18:"毒菇",
+
+    19:"活動菇",
+
+    26:"冰藍菇"
+
+  };
+
+
+  if(
+    plainNames[type]
+  ){
+
+    if(level === 4){
+
+      return (
+        "⭐ 巨大" +
+        plainNames[type]
+      );
+
+    }
+
+    return (
+      "🍄 大" +
+      plainNames[type]
+    );
 
   }
 
 
-  const t =
-    Number(x.type);
+  if(level === 4){
+
+    return (
+      "⭐ 巨大菇 Type " +
+      type
+    );
+
+  }
 
 
   return (
-    NAMES[t] ||
-    "🍄 大菇 Type " + t
+    "🍄 大菇 Type " +
+    type
   );
 
 }
 
 
 /*
-轉換時間
+時間轉毫秒
 */
 
 function toMilliseconds(v){
@@ -692,23 +766,16 @@ function toMilliseconds(v){
   let n =
     Number(v);
 
-
   if(!n){
-
     return 0;
-
   }
-
 
   if(
     n <
     100000000000
   ){
-
     n *= 1000;
-
   }
-
 
   return n;
 
@@ -716,7 +783,7 @@ function toMilliseconds(v){
 
 
 /*
-完整日期時間
+日期時間
 */
 
 function timeText(v){
@@ -724,37 +791,26 @@ function timeText(v){
   const n =
     toMilliseconds(v);
 
-
   if(!n){
-
     return "未知";
-
   }
-
 
   const d =
     new Date(n);
-
 
   if(
     isNaN(
       d.getTime()
     )
   ){
-
     return "未知";
-
   }
 
-
   return d.toLocaleString(
-
     "zh-TW",
-
     {
       hour12:false
     }
-
   );
 
 }
@@ -769,13 +825,9 @@ function minutesOld(v){
   const n =
     toMilliseconds(v);
 
-
   if(!n){
-
     return Infinity;
-
   }
-
 
   return (
     Date.now() - n
@@ -793,51 +845,33 @@ function ageText(v){
   const m =
     minutesOld(v);
 
-
-  if(
-    !isFinite(m)
-  ){
-
+  if(!isFinite(m)){
     return "時間未知";
-
   }
-
 
   if(m < 0){
-
     return "剛剛";
-
   }
-
 
   if(m < 1){
-
     return "不到 1 分鐘前";
-
   }
 
-
   if(m < 60){
-
     return (
       Math.floor(m) +
       " 分鐘前"
     );
-
   }
 
-
   if(m < 1440){
-
     return (
       Math.floor(
         m / 60
       ) +
       " 小時前"
     );
-
   }
-
 
   return (
     Math.floor(
@@ -858,20 +892,13 @@ function ageClass(v){
   const m =
     minutesOld(v);
 
-
   if(m <= 30){
-
     return "fresh";
-
   }
-
 
   if(m <= 180){
-
     return "old";
-
   }
-
 
   return "veryold";
 
@@ -879,7 +906,116 @@ function ageClass(v){
 
 
 /*
-建立 API 網址
+建立菇種選單
+*/
+
+function buildTypeMenu(){
+
+  const select =
+    document
+    .getElementById("type");
+
+  const current =
+    select.value;
+
+  const types =
+    [];
+
+
+  mushrooms.forEach(
+    function(x){
+
+      const type =
+        Number(x.type);
+
+      if(
+        !types.includes(type)
+      ){
+        types.push(type);
+      }
+
+    }
+  );
+
+
+  types.sort(
+    function(a,b){
+      return a-b;
+    }
+  );
+
+
+  select.innerHTML =
+    '<option value="">' +
+    '🍄 全部種類' +
+    '</option>';
+
+
+  types.forEach(
+    function(type){
+
+      const option =
+        document
+        .createElement("option");
+
+
+      option.value =
+        String(type);
+
+
+      const sample =
+        mushrooms.find(
+          x =>
+          Number(x.type) === type
+        );
+
+
+      if(
+        NAMES[type]
+      ){
+
+        option.textContent =
+          NAMES[type];
+
+      }
+
+      else{
+
+        option.textContent =
+          "🍄 Type " +
+          type;
+
+      }
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  if(
+    Array.from(
+      select.options
+    )
+    .some(
+      o =>
+      o.value === current
+    )
+  ){
+
+    select.value =
+      current;
+
+  }
+
+}
+
+
+/*
+建立 API URL
 */
 
 function buildApiUrl(){
@@ -916,7 +1052,7 @@ function buildApiUrl(){
 
 
 /*
-抓取資料
+抓資料
 */
 
 async function load(){
@@ -970,9 +1106,7 @@ async function load(){
       );
 
 
-    if(
-      !response.ok
-    ){
+    if(!response.ok){
 
       throw new Error(
         "HTTP " +
@@ -992,11 +1126,8 @@ async function load(){
     ){
 
       throw new Error(
-
         data?.error ||
-
         "API 回傳失敗"
-
       );
 
     }
@@ -1021,24 +1152,10 @@ async function load(){
         function(x){
 
 
-          /*
-          保留：
-
-          Level 3
-
-          或
-
-          Type 19 + Level 4
-          */
-
-
           if(
-            !isLarge(x) &&
-            !isGiantEvent(x)
+            !isWanted(x)
           ){
-
             return false;
-
           }
 
 
@@ -1063,14 +1180,11 @@ async function load(){
           if(
             seen.has(key)
           ){
-
             return false;
-
           }
 
 
           seen.add(key);
-
 
           return true;
 
@@ -1078,15 +1192,20 @@ async function load(){
       );
 
 
-    const giantCount =
+    buildTypeMenu();
+
+
+    const level3Count =
       mushrooms.filter(
-        isGiantEvent
+        x =>
+        Number(x.level) === 3
       ).length;
 
 
-    const largeCount =
+    const level4Count =
       mushrooms.filter(
-        isLarge
+        x =>
+        Number(x.level) === 4
       ).length;
 
 
@@ -1100,13 +1219,13 @@ async function load(){
 
       data.pages_fetched +
 
-      " 頁・一般大菇 " +
+      " 頁・Level 3：" +
 
-      largeCount +
+      level3Count +
 
-      " 個・巨大活動菇 " +
+      " 個・Level 4：" +
 
-      giantCount +
+      level4Count +
 
       " 個";
 
@@ -1118,7 +1237,8 @@ async function load(){
   catch(err){
 
 
-    mushrooms = [];
+    mushrooms =
+      [];
 
 
     document
@@ -1129,6 +1249,646 @@ async function load(){
 
     status.textContent =
 
+      "讀取失敗：" +
+
+      (
+        err?.message ||
+        String(err)
+      );
+
+  }
+
+  finally{
+
+    button.disabled =
+      false;
+
+  }
+
+}
+
+
+/*
+顯示結果
+*/
+
+function render(){
+
+
+  const q =
+    document
+    .getElementById("search")
+    .value
+    .trim()
+    .toLowerCase();
+
+
+  const selectedLevel =
+    document
+    .getElementById("level")
+    .value;
+
+
+  const selectedType =
+    document
+    .getElementById("type")
+    .value;
+
+
+  const maxAge =
+    Number(
+      document
+      .getElementById("age")
+      .value
+    );
+
+
+  const sort =
+    document
+    .getElementById("sort")
+    .value;
+
+
+  const onlyJoinable =
+    document
+    .getElementById("join")
+    .checked;
+
+
+  let list =
+    mushrooms.filter(
+      function(x){
+
+
+        /*
+        Level
+        */
+
+        if(
+          selectedLevel &&
+          String(x.level) !==
+          selectedLevel
+        ){
+          return false;
+        }
+
+
+        /*
+        Type
+        */
+
+        if(
+          selectedType &&
+          String(x.type) !==
+          selectedType
+        ){
+          return false;
+        }
+
+
+        /*
+        搜尋
+        */
+
+        const country =
+          String(
+            x.location_country ||
+            x.country ||
+            ""
+          );
+
+
+        const city =
+          String(
+            x.location_city ||
+            x.city ||
+            ""
+          );
+
+
+        const text =
+          (
+            country +
+            " " +
+            city +
+            " " +
+            getName(x)
+          )
+          .toLowerCase();
+
+
+        if(
+          q &&
+          !text.includes(q)
+        ){
+          return false;
+        }
+
+
+        /*
+        掃描時間
+        */
+
+        const scanTime =
+          getScanTime(x);
+
+
+        if(
+          maxAge > 0 &&
+          minutesOld(scanTime) >
+          maxAge
+        ){
+          return false;
+        }
+
+
+        /*
+        還能加入
+        */
+
+        if(
+          onlyJoinable
+        ){
+
+          const people =
+            getPeople(x);
+
+          const max =
+            getCapacity(x);
+
+
+          if(
+            max > 0 &&
+            people >= max
+          ){
+            return false;
+          }
+
+        }
+
+
+        /*
+        戰鬥人數 0
+        */
+
+        if(
+          sort === "zero" &&
+          getPeople(x) !== 0
+        ){
+          return false;
+        }
+
+
+        return true;
+
+      }
+    );
+
+
+  /*
+  排序
+  */
+
+  if(
+    sort === "people" ||
+    sort === "zero"
+  ){
+
+    list.sort(
+      function(a,b){
+
+        const diff =
+          getPeople(a) -
+          getPeople(b);
+
+        if(diff !== 0){
+          return diff;
+        }
+
+        return (
+          getScanTime(b) -
+          getScanTime(a)
+        );
+
+      }
+    );
+
+  }
+
+  else if(
+    sort === "peopleHigh"
+  ){
+
+    list.sort(
+      function(a,b){
+
+        const diff =
+          getPeople(b) -
+          getPeople(a);
+
+        if(diff !== 0){
+          return diff;
+        }
+
+        return (
+          getScanTime(b) -
+          getScanTime(a)
+        );
+
+      }
+    );
+
+  }
+
+  else{
+
+    list.sort(
+      function(a,b){
+
+        return (
+          getScanTime(b) -
+          getScanTime(a)
+        );
+
+      }
+    );
+
+  }
+
+
+  const result =
+    document
+    .getElementById("result");
+
+
+  result.innerHTML =
+
+    '<div class="box summary">' +
+
+    '🍄 目前符合條件：' +
+
+    list.length +
+
+    ' 個' +
+
+    '</div>';
+
+
+  if(
+    list.length === 0
+  ){
+
+    result.innerHTML +=
+
+      '<div class="box">' +
+
+      '目前沒有符合條件的菇。' +
+
+      '</div>';
+
+    return;
+
+  }
+
+
+  list
+  .slice(0,300)
+  .forEach(
+    function(x){
+
+
+      const level =
+        Number(x.level);
+
+
+      const people =
+        getPeople(x);
+
+
+      const max =
+        getCapacity(x);
+
+
+      const peopleText =
+        max > 0
+        ?
+        people +
+        " / " +
+        max
+        :
+        String(people);
+
+
+      const country =
+        x.location_country ||
+        x.country ||
+        "";
+
+
+      const city =
+        x.location_city ||
+        x.city ||
+        "";
+
+
+      const location =
+        (
+          country +
+          " " +
+          city
+        ).trim() ||
+        "位置未知";
+
+
+      const scanTime =
+        getScanTime(x);
+
+
+      const old =
+        minutesOld(scanTime);
+
+
+      const gps =
+        Number(x.lat) +
+        "," +
+        Number(x.lng);
+
+
+      const map =
+        "https://www.google.com/maps?q=" +
+        encodeURIComponent(gps);
+
+
+      let warning =
+        "";
+
+
+      if(old > 60){
+
+        warning =
+
+          '<div class="warning">' +
+
+          '⚠️ 此資料已超過 1 小時，戰鬥人數可能已經改變。' +
+
+          '</div>';
+
+      }
+
+
+      const peopleClass =
+        people === 0
+        ?
+        "people zero"
+        :
+        "people";
+
+
+      const card =
+        document
+        .createElement("div");
+
+
+      card.className =
+        level === 4
+        ?
+        "card level4"
+        :
+        "card";
+
+
+      const levelText =
+        level === 4
+        ?
+        "⭐ Level 4 巨大菇"
+        :
+        "🍄 Level 3 大菇";
+
+
+      card.innerHTML =
+
+        '<div class="levelBadge">' +
+
+        esc(levelText) +
+
+        '</div>' +
+
+
+        '<div class="name">' +
+
+        esc(
+          getName(x)
+        ) +
+
+        '</div>' +
+
+
+        '<div class="' +
+        peopleClass +
+        '">' +
+
+        '👥 最後掃描戰鬥人數：' +
+
+        esc(
+          peopleText
+        ) +
+
+        '</div>' +
+
+
+        '<div class="info">' +
+
+        '📍 ' +
+
+        esc(location) +
+
+        '</div>' +
+
+
+        '<div class="info">' +
+
+        '⚔️ 總戰力：' +
+
+        esc(
+          x.total_power ||
+          0
+        ) +
+
+        '</div>' +
+
+
+        '<div class="info ' +
+        ageClass(scanTime) +
+        '">' +
+
+        '🔄 最新掃描時間：' +
+
+        esc(
+          timeText(
+            scanTime
+          )
+        ) +
+
+        '</div>' +
+
+
+        '<div class="info ' +
+        ageClass(scanTime) +
+        '">' +
+
+        '⏱️ ' +
+
+        esc(
+          ageText(
+            scanTime
+          )
+        ) +
+
+        '</div>' +
+
+
+        warning +
+
+
+        '<div class="info">' +
+
+        '📌 GPS：' +
+
+        esc(gps) +
+
+        '</div>' +
+
+
+        '<a class="map" ' +
+
+        'href="' +
+
+        esc(map) +
+
+        '" ' +
+
+        'target="_blank" ' +
+
+        'rel="noopener noreferrer">' +
+
+        '📍 Google 地圖' +
+
+        '</a>';
+
+
+      result.appendChild(
+        card
+      );
+
+    }
+  );
+
+
+  if(
+    list.length > 300
+  ){
+
+    result.insertAdjacentHTML(
+
+      "beforeend",
+
+      '<div class="box">' +
+
+      '符合條件共有 ' +
+
+      list.length +
+
+      ' 筆，目前顯示前 300 筆。' +
+
+      '</div>'
+
+    );
+
+  }
+
+}
+
+
+/*
+事件
+*/
+
+document
+.getElementById("region")
+.addEventListener(
+  "change",
+  load
+);
+
+
+document
+.getElementById("reload")
+.addEventListener(
+  "click",
+  load
+);
+
+
+document
+.getElementById("search")
+.addEventListener(
+  "input",
+  render
+);
+
+
+document
+.getElementById("level")
+.addEventListener(
+  "change",
+  render
+);
+
+
+document
+.getElementById("type")
+.addEventListener(
+  "change",
+  render
+);
+
+
+document
+.getElementById("age")
+.addEventListener(
+  "change",
+  render
+);
+
+
+document
+.getElementById("sort")
+.addEventListener(
+  "change",
+  render
+);
+
+
+document
+.getElementById("join")
+.addEventListener(
+  "change",
+  render
+);
+
+
+/*
+第一次載入
+*/
+
+load();
+
+
+</script>
+
+</body>
+
+</html>
       "讀取失敗：" +
 
       (
