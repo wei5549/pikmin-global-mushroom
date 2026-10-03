@@ -1,19 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="zh-Hant">
 
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>wei</title>
 
 <style>
-
 *{
   box-sizing:border-box;
 }
@@ -22,10 +16,7 @@ body{
   margin:0;
   background:#0d1117;
   color:#fff;
-  font-family:
-    Arial,
-    "Noto Sans TC",
-    sans-serif;
+  font-family:Arial,"Noto Sans TC",sans-serif;
 }
 
 main{
@@ -186,34 +177,22 @@ button:disabled{
   text-decoration:none;
   font-weight:bold;
 }
-
 </style>
-
 </head>
-
 
 <body>
 
 <main>
 
-
 <h1>wei</h1>
 
-
 <div class="sub">
-
 公開掃描資料・顯示 Level 3 與 Level 4 蘑菇<br>
-
 戰鬥人數為「最後一次掃描時」的紀錄，
 不代表遊戲目前即時人數。
-
 </div>
 
-
 <div class="box">
-
-
-<!-- 地區 -->
 
 <select id="region">
 
@@ -221,629 +200,257 @@ button:disabled{
 🌏 全球・目前掃描資料
 </option>
 
-
 <optgroup label="亞洲">
-
-<option value="india">
-🇮🇳 印度
-</option>
-
-<option value="vietnam">
-🇻🇳 越南
-</option>
-
-<option value="indonesia">
-🇮🇩 印尼
-</option>
-
-<option value="philippines">
-🇵🇭 菲律賓
-</option>
-
-<option value="malaysia">
-🇲🇾 馬來西亞
-</option>
-
-<option value="singapore">
-🇸🇬 新加坡
-</option>
-
-<option value="thailand">
-🇹🇭 泰國
-</option>
-
+<option value="india">🇮🇳 印度</option>
+<option value="vietnam">🇻🇳 越南</option>
+<option value="indonesia">🇮🇩 印尼</option>
+<option value="philippines">🇵🇭 菲律賓</option>
+<option value="malaysia">🇲🇾 馬來西亞</option>
+<option value="singapore">🇸🇬 新加坡</option>
+<option value="thailand">🇹🇭 泰國</option>
 </optgroup>
-
 
 <optgroup label="中東">
-
-<option value="uae">
-🇦🇪 阿拉伯聯合大公國
-</option>
-
-<option value="saudi">
-🇸🇦 沙烏地阿拉伯
-</option>
-
-<option value="qatar">
-🇶🇦 卡達
-</option>
-
-<option value="kuwait">
-🇰🇼 科威特
-</option>
-
-<option value="bahrain">
-🇧🇭 巴林
-</option>
-
-<option value="oman">
-🇴🇲 阿曼
-</option>
-
+<option value="uae">🇦🇪 阿拉伯聯合大公國</option>
+<option value="saudi">🇸🇦 沙烏地阿拉伯</option>
+<option value="qatar">🇶🇦 卡達</option>
+<option value="kuwait">🇰🇼 科威特</option>
+<option value="bahrain">🇧🇭 巴林</option>
+<option value="oman">🇴🇲 阿曼</option>
 </optgroup>
-
 
 <optgroup label="大洋洲">
-
-<option value="australia">
-🇦🇺 澳洲
-</option>
-
-<option value="newzealand">
-🇳🇿 紐西蘭
-</option>
-
+<option value="australia">🇦🇺 澳洲</option>
+<option value="newzealand">🇳🇿 紐西蘭</option>
 </optgroup>
 
-
 <optgroup label="北美">
-
-<option value="usa">
-🇺🇸 美國
-</option>
-
-<option value="canada">
-🇨🇦 加拿大
-</option>
-
+<option value="usa">🇺🇸 美國</option>
+<option value="canada">🇨🇦 加拿大</option>
 </optgroup>
 
 </select>
-
-
-<!-- 搜尋 -->
 
 <input
   id="search"
   type="text"
   placeholder="🔎 搜尋國家、城市">
 
-
-<!-- 等級 -->
-
 <select id="level">
-
-<option value="">
-🍄 Level 3 + Level 4
-</option>
-
-<option value="3">
-🍄 只看 Level 3
-</option>
-
-<option value="4">
-⭐ 只看 Level 4
-</option>
-
+<option value="">🍄 Level 3 + Level 4</option>
+<option value="3">🍄 只看 Level 3</option>
+<option value="4">⭐ 只看 Level 4</option>
 </select>
-
-
-<!-- 菇種類 -->
 
 <select id="type">
-
-<option value="">
-🍄 全部種類
-</option>
-
+<option value="">🍄 全部種類</option>
 </select>
-
-
-<!-- 掃描時間 -->
 
 <select id="age">
-
-<option value="0">
-🕒 全部掃描時間
-</option>
-
-<option value="10">
-🟢 10 分鐘內
-</option>
-
-<option value="30">
-🟢 30 分鐘內
-</option>
-
-<option value="60">
-🕒 1 小時內
-</option>
-
-<option value="180">
-🕒 3 小時內
-</option>
-
-<option value="1440">
-📅 24 小時內
-</option>
-
+<option value="0">🕒 全部掃描時間</option>
+<option value="10">🟢 10 分鐘內</option>
+<option value="30">🟢 30 分鐘內</option>
+<option value="60">🕒 1 小時內</option>
+<option value="180">🕒 3 小時內</option>
+<option value="1440">📅 24 小時內</option>
 </select>
-
-
-<!-- 排序 -->
 
 <select id="sort">
-
-<option value="new">
-🕒 最新掃描時間
-</option>
-
-<option value="zero">
-👤 戰鬥人數 0
-</option>
-
-<option value="people">
-👥 戰鬥人數最少
-</option>
-
-<option value="peopleHigh">
-👥 戰鬥人數最多
-</option>
-
+<option value="new">🕒 最新掃描時間</option>
+<option value="zero">👤 戰鬥人數 0</option>
+<option value="people">👥 戰鬥人數最少</option>
+<option value="peopleHigh">👥 戰鬥人數最多</option>
 </select>
 
-
 <label class="check">
-
-<input
-  id="join"
-  type="checkbox"
-  checked>
-
+<input id="join" type="checkbox" checked>
 只顯示最後掃描時還能加入
-
 </label>
 
-
 <button id="reload">
-
 🔄 重新抓取資料
-
 </button>
 
-
 <div id="status">
-
 準備抓取資料...
-
 </div>
 
-
 </div>
-
 
 <div id="result"></div>
 
-
 </main>
 
-
 <script>
-
 
 const API =
 "https://late-glade-6923.awho86958.workers.dev";
 
-
-/*
-地區 bbox
-*/
-
 const REGIONS = {
-
-india:
-"68,6,98,36",
-
-vietnam:
-"102,8,110,24",
-
-indonesia:
-"94,-12,142,7",
-
-philippines:
-"116,4,127,22",
-
-malaysia:
-"99,0,120,8",
-
-singapore:
-"103.5,1.1,104.1,1.6",
-
-thailand:
-"97,5,106,21",
-
-uae:
-"51,22,57,27",
-
-saudi:
-"34,16,56,33",
-
-qatar:
-"50.7,24.3,52,26.3",
-
-kuwait:
-"46.4,28.3,49,30.3",
-
-bahrain:
-"50.3,25.5,50.9,26.5",
-
-oman:
-"51.5,16,60,27",
-
-australia:
-"112,-44,154,-10",
-
-newzealand:
-"165,-48,179,-33",
-
-usa:
-"-125,24,-66,50",
-
-canada:
-"-141,41,-52,84"
-
+  india:"68,6,98,36",
+  vietnam:"102,8,110,24",
+  indonesia:"94,-12,142,7",
+  philippines:"116,4,127,22",
+  malaysia:"99,0,120,8",
+  singapore:"103.5,1.1,104.1,1.6",
+  thailand:"97,5,106,21",
+  uae:"51,22,57,27",
+  saudi:"34,16,56,33",
+  qatar:"50.7,24.3,52,26.3",
+  kuwait:"46.4,28.3,49,30.3",
+  bahrain:"50.3,25.5,50.9,26.5",
+  oman:"51.5,16,60,27",
+  australia:"112,-44,154,-10",
+  newzealand:"165,-48,179,-33",
+  usa:"-125,24,-66,50",
+  canada:"-141,41,-52,84"
 };
-
-
-/*
-已知 Type 名稱
-
-未知 Type 仍然會顯示，
-不會被排除。
-*/
 
 const NAMES = {
-
-2:"🔴 紅菇",
-
-3:"🩶 灰菇",
-
-5:"🔵 藍菇",
-
-6:"🟡 黃菇",
-
-7:"⚪ 白菇",
-
-8:"🟣 紫菇",
-
-9:"🌸 粉菇",
-
-11:"🔥 火菇",
-
-12:"💧 水菇",
-
-13:"💎 水晶菇",
-
-17:"⚡ 電菇",
-
-18:"☠️ 毒菇",
-
-19:"🎉 活動菇",
-
-26:"🧊 冰藍菇"
-
+  2:"🔴 紅菇",
+  3:"🩶 灰菇",
+  5:"🔵 藍菇",
+  6:"🟡 黃菇",
+  7:"⚪ 白菇",
+  8:"🟣 紫菇",
+  9:"🌸 粉菇",
+  11:"🔥 火菇",
+  12:"💧 水菇",
+  13:"💎 水晶菇",
+  17:"⚡ 電菇",
+  18:"☠️ 毒菇",
+  19:"🎉 活動菇",
+  26:"🧊 冰藍菇"
 };
 
+const PLAIN_NAMES = {
+  2:"紅菇",
+  3:"灰菇",
+  5:"藍菇",
+  6:"黃菇",
+  7:"白菇",
+  8:"紫菇",
+  9:"粉菇",
+  11:"火菇",
+  12:"水菇",
+  13:"水晶菇",
+  17:"電菇",
+  18:"毒菇",
+  19:"活動菇",
+  26:"冰藍菇"
+};
 
 let mushrooms = [];
 
-
-/*
-HTML 安全處理
-*/
-
 function esc(v){
-
-  const d =
-    document.createElement("div");
-
-  d.textContent =
-    String(
-      v == null
-      ? ""
-      : v
-    );
-
+  const d = document.createElement("div");
+  d.textContent = String(v == null ? "" : v);
   return d.innerHTML;
-
 }
-
-
-/*
-只接受 Level 3 / Level 4
-*/
 
 function isWanted(x){
-
-  const level =
-    Number(x.level);
-
-  return (
-    level === 3 ||
-    level === 4
-  );
-
+  const level = Number(x.level);
+  return level === 3 || level === 4;
 }
-
-
-/*
-戰鬥人數
-*/
 
 function getPeople(x){
-
   return Number(
-
     x.challenger_count ??
-
     x.participant_count ??
-
     x.participants ??
-
     0
-
   );
-
 }
-
-
-/*
-最大人數
-*/
 
 function getCapacity(x){
-
   return Number(
-
     x.challenger_capacity ??
-
     x.max_participants ??
-
     x.capacity ??
-
     0
-
   );
-
 }
-
-
-/*
-掃描時間
-*/
 
 function getScanTime(x){
-
   return Number(
-
     x.participants_verified_at ||
-
     x.last_observed_at ||
-
     x.last_seen ||
-
     x.discovered_at ||
-
     0
-
   );
-
 }
-
-
-/*
-名稱
-
-Level 3：
-大紅菇、大毒菇...
-
-Level 4：
-巨大紅菇、巨大毒菇...
-
-未知 Type：
-大菇 Type XX
-巨大菇 Type XX
-*/
 
 function getName(x){
 
-  const type =
-    Number(x.type);
+  const type = Number(x.type);
+  const level = Number(x.level);
 
-  const level =
-    Number(x.level);
-
-  let base =
-    NAMES[type] ||
-    ("🍄 Type " + type);
-
-
-  /*
-    去掉前面的 emoji，
-    但保留名稱。
-    這裡用已知名稱重新處理。
-  */
-
-  const plainNames = {
-
-    2:"紅菇",
-
-    3:"灰菇",
-
-    5:"藍菇",
-
-    6:"黃菇",
-
-    7:"白菇",
-
-    8:"紫菇",
-
-    9:"粉菇",
-
-    11:"火菇",
-
-    12:"水菇",
-
-    13:"水晶菇",
-
-    17:"電菇",
-
-    18:"毒菇",
-
-    19:"活動菇",
-
-    26:"冰藍菇"
-
-  };
-
-
-  if(
-    plainNames[type]
-  ){
+  if(PLAIN_NAMES[type]){
 
     if(level === 4){
-
-      return (
-        "⭐ 巨大" +
-        plainNames[type]
-      );
-
+      return "⭐ 巨大" + PLAIN_NAMES[type];
     }
 
-    return (
-      "🍄 大" +
-      plainNames[type]
-    );
-
+    return "🍄 大" + PLAIN_NAMES[type];
   }
-
 
   if(level === 4){
-
-    return (
-      "⭐ 巨大菇 Type " +
-      type
-    );
-
+    return "⭐ 巨大菇 Type " + type;
   }
 
-
-  return (
-    "🍄 大菇 Type " +
-    type
-  );
-
+  return "🍄 大菇 Type " + type;
 }
-
-
-/*
-時間轉毫秒
-*/
 
 function toMilliseconds(v){
 
-  let n =
-    Number(v);
+  let n = Number(v);
 
   if(!n){
     return 0;
   }
 
-  if(
-    n <
-    100000000000
-  ){
+  if(n < 100000000000){
     n *= 1000;
   }
 
   return n;
-
 }
-
-
-/*
-日期時間
-*/
 
 function timeText(v){
 
-  const n =
-    toMilliseconds(v);
+  const n = toMilliseconds(v);
 
   if(!n){
     return "未知";
   }
 
-  const d =
-    new Date(n);
+  const d = new Date(n);
 
-  if(
-    isNaN(
-      d.getTime()
-    )
-  ){
+  if(isNaN(d.getTime())){
     return "未知";
   }
 
   return d.toLocaleString(
     "zh-TW",
-    {
-      hour12:false
-    }
+    {hour12:false}
   );
-
 }
-
-
-/*
-距離現在幾分鐘
-*/
 
 function minutesOld(v){
 
-  const n =
-    toMilliseconds(v);
+  const n = toMilliseconds(v);
 
   if(!n){
     return Infinity;
   }
 
-  return (
-    Date.now() - n
-  ) / 60000;
-
+  return (Date.now() - n) / 60000;
 }
-
-
-/*
-相對時間
-*/
 
 function ageText(v){
 
-  const m =
-    minutesOld(v);
+  const m = minutesOld(v);
 
   if(!isFinite(m)){
     return "時間未知";
@@ -858,39 +465,19 @@ function ageText(v){
   }
 
   if(m < 60){
-    return (
-      Math.floor(m) +
-      " 分鐘前"
-    );
+    return Math.floor(m) + " 分鐘前";
   }
 
   if(m < 1440){
-    return (
-      Math.floor(
-        m / 60
-      ) +
-      " 小時前"
-    );
+    return Math.floor(m / 60) + " 小時前";
   }
 
-  return (
-    Math.floor(
-      m / 1440
-    ) +
-    " 天前"
-  );
-
+  return Math.floor(m / 1440) + " 天前";
 }
-
-
-/*
-時間顏色
-*/
 
 function ageClass(v){
 
-  const m =
-    minutesOld(v);
+  const m = minutesOld(v);
 
   if(m <= 30){
     return "fresh";
@@ -901,379 +488,214 @@ function ageClass(v){
   }
 
   return "veryold";
-
 }
-
-
-/*
-建立菇種選單
-*/
 
 function buildTypeMenu(){
 
   const select =
-    document
-    .getElementById("type");
+    document.getElementById("type");
 
-  const current =
-    select.value;
+  const current = select.value;
 
-  const types =
-    [];
+  const types = [];
 
+  mushrooms.forEach(function(x){
 
-  mushrooms.forEach(
-    function(x){
+    const type = Number(x.type);
 
-      const type =
-        Number(x.type);
-
-      if(
-        !types.includes(type)
-      ){
-        types.push(type);
-      }
-
+    if(!types.includes(type)){
+      types.push(type);
     }
-  );
 
+  });
 
-  types.sort(
-    function(a,b){
-      return a-b;
-    }
-  );
-
+  types.sort(function(a,b){
+    return a-b;
+  });
 
   select.innerHTML =
-    '<option value="">' +
-    '🍄 全部種類' +
-    '</option>';
+    '<option value="">🍄 全部種類</option>';
 
+  types.forEach(function(type){
 
-  types.forEach(
-    function(type){
+    const option =
+      document.createElement("option");
 
-      const option =
-        document
-        .createElement("option");
+    option.value = String(type);
 
-
-      option.value =
-        String(type);
-
-
-      const sample =
-        mushrooms.find(
-          x =>
-          Number(x.type) === type
-        );
-
-
-      if(
-        NAMES[type]
-      ){
-
-        option.textContent =
-          NAMES[type];
-
-      }
-
-      else{
-
-        option.textContent =
-          "🍄 Type " +
-          type;
-
-      }
-
-
-      select.appendChild(
-        option
-      );
-
+    if(NAMES[type]){
+      option.textContent = NAMES[type];
+    }else{
+      option.textContent = "🍄 Type " + type;
     }
-  );
 
+    select.appendChild(option);
+
+  });
 
   if(
-    Array.from(
-      select.options
-    )
-    .some(
-      o =>
-      o.value === current
-    )
+    Array.from(select.options)
+    .some(o => o.value === current)
   ){
-
-    select.value =
-      current;
-
+    select.value = current;
   }
-
 }
-
-
-/*
-建立 API URL
-*/
 
 function buildApiUrl(){
 
   const region =
-    document
-    .getElementById("region")
-    .value;
-
+    document.getElementById("region").value;
 
   let url =
     API +
     "?t=" +
     Date.now();
 
-
-  if(
-    region &&
-    REGIONS[region]
-  ){
+  if(region && REGIONS[region]){
 
     url +=
       "&bbox=" +
-      encodeURIComponent(
-        REGIONS[region]
-      );
+      encodeURIComponent(REGIONS[region]);
 
   }
 
-
   return url;
-
 }
-
-
-/*
-抓資料
-*/
 
 async function load(){
 
   const status =
-    document
-    .getElementById("status");
-
+    document.getElementById("status");
 
   const button =
-    document
-    .getElementById("reload");
-
+    document.getElementById("reload");
 
   const regionSelect =
-    document
-    .getElementById("region");
-
+    document.getElementById("region");
 
   const regionName =
     regionSelect
-    .options[
-      regionSelect.selectedIndex
-    ]
+    .options[regionSelect.selectedIndex]
     .textContent
     .trim();
-
 
   status.textContent =
     "正在抓取 " +
     regionName +
     " 的資料...";
 
+  button.disabled = true;
 
-  button.disabled =
-    true;
-
-
-  try {
-
+  try{
 
     const response =
       await fetch(
-
         buildApiUrl(),
-
-        {
-          cache:"no-store"
-        }
-
+        {cache:"no-store"}
       );
 
-
     if(!response.ok){
-
       throw new Error(
         "HTTP " +
         response.status
       );
-
     }
-
 
     const data =
       await response.json();
 
-
-    if(
-      !data ||
-      data.success !== true
-    ){
-
+    if(!data || data.success !== true){
       throw new Error(
         data?.error ||
         "API 回傳失敗"
       );
-
     }
 
-
     const source =
-      Array.isArray(
-        data.mushrooms
-      )
-      ?
-      data.mushrooms
-      :
-      [];
+      Array.isArray(data.mushrooms)
+      ? data.mushrooms
+      : [];
 
-
-    const seen =
-      new Set();
-
+    const seen = new Set();
 
     mushrooms =
-      source.filter(
-        function(x){
+      source.filter(function(x){
 
-
-          if(
-            !isWanted(x)
-          ){
-            return false;
-          }
-
-
-          const key =
-            String(
-
-              x.id ||
-
-              (
-                x.lat +
-                "|" +
-                x.lng +
-                "|" +
-                x.type +
-                "|" +
-                x.level
-              )
-
-            );
-
-
-          if(
-            seen.has(key)
-          ){
-            return false;
-          }
-
-
-          seen.add(key);
-
-          return true;
-
+        if(!isWanted(x)){
+          return false;
         }
-      );
 
+        const key =
+          String(
+            x.id ||
+            (
+              x.lat +
+              "|" +
+              x.lng +
+              "|" +
+              x.type +
+              "|" +
+              x.level
+            )
+          );
+
+        if(seen.has(key)){
+          return false;
+        }
+
+        seen.add(key);
+
+        return true;
+      });
 
     buildTypeMenu();
 
-
     const level3Count =
       mushrooms.filter(
-        x =>
-        Number(x.level) === 3
+        x => Number(x.level) === 3
       ).length;
-
 
     const level4Count =
       mushrooms.filter(
-        x =>
-        Number(x.level) === 4
+        x => Number(x.level) === 4
       ).length;
 
-
     status.textContent =
-
       "抓取成功：" +
-
       regionName +
-
       "・" +
-
       data.pages_fetched +
-
       " 頁・Level 3：" +
-
       level3Count +
-
       " 個・Level 4：" +
-
       level4Count +
-
       " 個";
-
 
     render();
 
-  }
+  }catch(err){
 
-  catch(err){
-
-
-    mushrooms =
-      [];
-
+    mushrooms = [];
 
     document
-    .getElementById("result")
-    .innerHTML =
-      "";
-
+      .getElementById("result")
+      .innerHTML = "";
 
     status.textContent =
-
       "讀取失敗：" +
-
       (
         err?.message ||
         String(err)
       );
 
-  }
+  }finally{
 
-  finally{
-
-    button.disabled =
-      false;
+    button.disabled = false;
 
   }
-
 }
 
-
-/*
-顯示結果
-*/
-
 function render(){
-
 
   const q =
     document
@@ -1281,19 +703,16 @@ function render(){
     .value
     .trim()
     .toLowerCase();
-
 
   const selectedLevel =
     document
     .getElementById("level")
     .value;
 
-
   const selectedType =
     document
     .getElementById("type")
     .value;
-
 
   const maxAge =
     Number(
@@ -1302,1235 +721,364 @@ function render(){
       .value
     );
 
-
   const sort =
     document
     .getElementById("sort")
     .value;
-
 
   const onlyJoinable =
     document
     .getElementById("join")
     .checked;
 
-
   let list =
-    mushrooms.filter(
-      function(x){
+    mushrooms.filter(function(x){
 
-
-        /*
-        Level
-        */
-
-        if(
-          selectedLevel &&
-          String(x.level) !==
-          selectedLevel
-        ){
-          return false;
-        }
-
-
-        /*
-        Type
-        */
-
-        if(
-          selectedType &&
-          String(x.type) !==
-          selectedType
-        ){
-          return false;
-        }
-
-
-        /*
-        搜尋
-        */
-
-        const country =
-          String(
-            x.location_country ||
-            x.country ||
-            ""
-          );
-
-
-        const city =
-          String(
-            x.location_city ||
-            x.city ||
-            ""
-          );
-
-
-        const text =
-          (
-            country +
-            " " +
-            city +
-            " " +
-            getName(x)
-          )
-          .toLowerCase();
-
-
-        if(
-          q &&
-          !text.includes(q)
-        ){
-          return false;
-        }
-
-
-        /*
-        掃描時間
-        */
-
-        const scanTime =
-          getScanTime(x);
-
-
-        if(
-          maxAge > 0 &&
-          minutesOld(scanTime) >
-          maxAge
-        ){
-          return false;
-        }
-
-
-        /*
-        還能加入
-        */
-
-        if(
-          onlyJoinable
-        ){
-
-          const people =
-            getPeople(x);
-
-          const max =
-            getCapacity(x);
-
-
-          if(
-            max > 0 &&
-            people >= max
-          ){
-            return false;
-          }
-
-        }
-
-
-        /*
-        戰鬥人數 0
-        */
-
-        if(
-          sort === "zero" &&
-          getPeople(x) !== 0
-        ){
-          return false;
-        }
-
-
-        return true;
-
+      if(
+        selectedLevel &&
+        String(x.level) !== selectedLevel
+      ){
+        return false;
       }
-    );
 
+      if(
+        selectedType &&
+        String(x.type) !== selectedType
+      ){
+        return false;
+      }
 
-  /*
-  排序
-  */
+      const country =
+        String(
+          x.location_country ||
+          x.country ||
+          ""
+        );
+
+      const city =
+        String(
+          x.location_city ||
+          x.city ||
+          ""
+        );
+
+      const text =
+        (
+          country +
+          " " +
+          city +
+          " " +
+          getName(x)
+        ).toLowerCase();
+
+      if(q && !text.includes(q)){
+        return false;
+      }
+
+      const scanTime =
+        getScanTime(x);
+
+      if(
+        maxAge > 0 &&
+        minutesOld(scanTime) > maxAge
+      ){
+        return false;
+      }
+
+      if(onlyJoinable){
+
+        const people =
+          getPeople(x);
+
+        const max =
+          getCapacity(x);
+
+        if(
+          max > 0 &&
+          people >= max
+        ){
+          return false;
+        }
+      }
+
+      if(
+        sort === "zero" &&
+        getPeople(x) !== 0
+      ){
+        return false;
+      }
+
+      return true;
+    });
 
   if(
     sort === "people" ||
     sort === "zero"
   ){
 
-    list.sort(
-      function(a,b){
+    list.sort(function(a,b){
 
-        const diff =
-          getPeople(a) -
-          getPeople(b);
+      const diff =
+        getPeople(a) -
+        getPeople(b);
 
-        if(diff !== 0){
-          return diff;
-        }
-
-        return (
-          getScanTime(b) -
-          getScanTime(a)
-        );
-
+      if(diff !== 0){
+        return diff;
       }
-    );
+
+      return (
+        getScanTime(b) -
+        getScanTime(a)
+      );
+    });
+
+  }else if(sort === "peopleHigh"){
+
+    list.sort(function(a,b){
+
+      const diff =
+        getPeople(b) -
+        getPeople(a);
+
+      if(diff !== 0){
+        return diff;
+      }
+
+      return (
+        getScanTime(b) -
+        getScanTime(a)
+      );
+    });
+
+  }else{
+
+    list.sort(function(a,b){
+
+      return (
+        getScanTime(b) -
+        getScanTime(a)
+      );
+
+    });
 
   }
-
-  else if(
-    sort === "peopleHigh"
-  ){
-
-    list.sort(
-      function(a,b){
-
-        const diff =
-          getPeople(b) -
-          getPeople(a);
-
-        if(diff !== 0){
-          return diff;
-        }
-
-        return (
-          getScanTime(b) -
-          getScanTime(a)
-        );
-
-      }
-    );
-
-  }
-
-  else{
-
-    list.sort(
-      function(a,b){
-
-        return (
-          getScanTime(b) -
-          getScanTime(a)
-        );
-
-      }
-    );
-
-  }
-
 
   const result =
-    document
-    .getElementById("result");
-
+    document.getElementById("result");
 
   result.innerHTML =
-
     '<div class="box summary">' +
-
     '🍄 目前符合條件：' +
-
     list.length +
-
     ' 個' +
-
     '</div>';
 
-
-  if(
-    list.length === 0
-  ){
+  if(list.length === 0){
 
     result.innerHTML +=
-
       '<div class="box">' +
-
       '目前沒有符合條件的菇。' +
-
       '</div>';
 
     return;
-
   }
-
 
   list
   .slice(0,300)
-  .forEach(
-    function(x){
-
-
-      const level =
-        Number(x.level);
-
-
-      const people =
-        getPeople(x);
-
-
-      const max =
-        getCapacity(x);
-
-
-      const peopleText =
-        max > 0
-        ?
-        people +
-        " / " +
-        max
-        :
-        String(people);
-
-
-      const country =
-        x.location_country ||
-        x.country ||
-        "";
-
-
-      const city =
-        x.location_city ||
-        x.city ||
-        "";
-
-
-      const location =
-        (
-          country +
-          " " +
-          city
-        ).trim() ||
-        "位置未知";
-
-
-      const scanTime =
-        getScanTime(x);
-
-
-      const old =
-        minutesOld(scanTime);
-
-
-      const gps =
-        Number(x.lat) +
-        "," +
-        Number(x.lng);
-
-
-      const map =
-        "https://www.google.com/maps?q=" +
-        encodeURIComponent(gps);
-
-
-      let warning =
-        "";
-
-
-      if(old > 60){
-
-        warning =
-
-          '<div class="warning">' +
-
-          '⚠️ 此資料已超過 1 小時，戰鬥人數可能已經改變。' +
-
-          '</div>';
-
-      }
-
-
-      const peopleClass =
-        people === 0
-        ?
-        "people zero"
-        :
-        "people";
-
-
-      const card =
-        document
-        .createElement("div");
-
-
-      card.className =
-        level === 4
-        ?
-        "card level4"
-        :
-        "card";
-
-
-      const levelText =
-        level === 4
-        ?
-        "⭐ Level 4 巨大菇"
-        :
-        "🍄 Level 3 大菇";
-
-
-      card.innerHTML =
-
-        '<div class="levelBadge">' +
-
-        esc(levelText) +
-
-        '</div>' +
-
-
-        '<div class="name">' +
-
-        esc(
-          getName(x)
-        ) +
-
-        '</div>' +
-
-
-        '<div class="' +
-        peopleClass +
-        '">' +
-
-        '👥 最後掃描戰鬥人數：' +
-
-        esc(
-          peopleText
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info">' +
-
-        '📍 ' +
-
-        esc(location) +
-
-        '</div>' +
-
-
-        '<div class="info">' +
-
-        '⚔️ 總戰力：' +
-
-        esc(
-          x.total_power ||
-          0
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info ' +
-        ageClass(scanTime) +
-        '">' +
-
-        '🔄 最新掃描時間：' +
-
-        esc(
-          timeText(
-            scanTime
-          )
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info ' +
-        ageClass(scanTime) +
-        '">' +
-
-        '⏱️ ' +
-
-        esc(
-          ageText(
-            scanTime
-          )
-        ) +
-
-        '</div>' +
-
-
-        warning +
-
-
-        '<div class="info">' +
-
-        '📌 GPS：' +
-
-        esc(gps) +
-
-        '</div>' +
-
-
-        '<a class="map" ' +
-
-        'href="' +
-
-        esc(map) +
-
-        '" ' +
-
-        'target="_blank" ' +
-
-        'rel="noopener noreferrer">' +
-
-        '📍 Google 地圖' +
-
-        '</a>';
-
-
-      result.appendChild(
-        card
-      );
-
+  .forEach(function(x){
+
+    const level =
+      Number(x.level);
+
+    const people =
+      getPeople(x);
+
+    const max =
+      getCapacity(x);
+
+    const peopleText =
+      max > 0
+      ?
+      people + " / " + max
+      :
+      String(people);
+
+    const country =
+      x.location_country ||
+      x.country ||
+      "";
+
+    const city =
+      x.location_city ||
+      x.city ||
+      "";
+
+    const location =
+      (
+        country +
+        " " +
+        city
+      ).trim() ||
+      "位置未知";
+
+    const scanTime =
+      getScanTime(x);
+
+    const old =
+      minutesOld(scanTime);
+
+    const gps =
+      Number(x.lat) +
+      "," +
+      Number(x.lng);
+
+    const map =
+      "https://www.google.com/maps?q=" +
+      encodeURIComponent(gps);
+
+    let warning = "";
+
+    if(old > 60){
+
+      warning =
+        '<div class="warning">' +
+        '⚠️ 此資料已超過 1 小時，戰鬥人數可能已經改變。' +
+        '</div>';
     }
-  );
 
+    const peopleClass =
+      people === 0
+      ?
+      "people zero"
+      :
+      "people";
 
-  if(
-    list.length > 300
-  ){
+    const card =
+      document.createElement("div");
+
+    card.className =
+      level === 4
+      ?
+      "card level4"
+      :
+      "card";
+
+    const levelText =
+      level === 4
+      ?
+      "⭐ Level 4 巨大菇"
+      :
+      "🍄 Level 3 大菇";
+
+    card.innerHTML =
+
+      '<div class="levelBadge">' +
+      esc(levelText) +
+      '</div>' +
+
+      '<div class="name">' +
+      esc(getName(x)) +
+      '</div>' +
+
+      '<div class="' +
+      peopleClass +
+      '">' +
+      '👥 最後掃描戰鬥人數：' +
+      esc(peopleText) +
+      '</div>' +
+
+      '<div class="info">' +
+      '📍 ' +
+      esc(location) +
+      '</div>' +
+
+      '<div class="info">' +
+      '⚔️ 總戰力：' +
+      esc(x.total_power || 0) +
+      '</div>' +
+
+      '<div class="info ' +
+      ageClass(scanTime) +
+      '">' +
+      '🔄 最新掃描時間：' +
+      esc(timeText(scanTime)) +
+      '</div>' +
+
+      '<div class="info ' +
+      ageClass(scanTime) +
+      '">' +
+      '⏱️ ' +
+      esc(ageText(scanTime)) +
+      '</div>' +
+
+      warning +
+
+      '<div class="info">' +
+      '📌 GPS：' +
+      esc(gps) +
+      '</div>' +
+
+      '<a class="map" ' +
+      'href="' +
+      esc(map) +
+      '" ' +
+      'target="_blank" ' +
+      'rel="noopener noreferrer">' +
+      '📍 Google 地圖' +
+      '</a>';
+
+    result.appendChild(card);
+
+  });
+
+  if(list.length > 300){
 
     result.insertAdjacentHTML(
-
       "beforeend",
-
       '<div class="box">' +
-
       '符合條件共有 ' +
-
       list.length +
-
       ' 筆，目前顯示前 300 筆。' +
-
       '</div>'
-
     );
-
   }
-
 }
-
-
-/*
-事件
-*/
 
 document
 .getElementById("region")
-.addEventListener(
-  "change",
-  load
-);
-
+.addEventListener("change",load);
 
 document
 .getElementById("reload")
-.addEventListener(
-  "click",
-  load
-);
-
+.addEventListener("click",load);
 
 document
 .getElementById("search")
-.addEventListener(
-  "input",
-  render
-);
-
+.addEventListener("input",render);
 
 document
 .getElementById("level")
-.addEventListener(
-  "change",
-  render
-);
-
+.addEventListener("change",render);
 
 document
 .getElementById("type")
-.addEventListener(
-  "change",
-  render
-);
-
+.addEventListener("change",render);
 
 document
 .getElementById("age")
-.addEventListener(
-  "change",
-  render
-);
-
+.addEventListener("change",render);
 
 document
 .getElementById("sort")
-.addEventListener(
-  "change",
-  render
-);
-
+.addEventListener("change",render);
 
 document
 .getElementById("join")
-.addEventListener(
-  "change",
-  render
-);
-
-
-/*
-第一次載入
-*/
+.addEventListener("change",render);
 
 load();
-
 
 </script>
 
 </body>
-
-</html>
-      "讀取失敗：" +
-
-      (
-        err?.message ||
-        String(err)
-      );
-
-  }
-
-  finally{
-
-
-    button.disabled =
-      false;
-
-  }
-
-}
-
-
-/*
-顯示結果
-*/
-
-function render(){
-
-
-  const q =
-    document
-    .getElementById("search")
-    .value
-    .trim()
-    .toLowerCase();
-
-
-  const selectedType =
-    document
-    .getElementById("type")
-    .value;
-
-
-  const maxAge =
-    Number(
-      document
-      .getElementById("age")
-      .value
-    );
-
-
-  const sort =
-    document
-    .getElementById("sort")
-    .value;
-
-
-  const onlyJoinable =
-    document
-    .getElementById("join")
-    .checked;
-
-
-  let list =
-    mushrooms.filter(
-      function(x){
-
-
-        /*
-        菇類型
-        */
-
-        if(
-          selectedType ===
-          "giant" &&
-          !isGiantEvent(x)
-        ){
-
-          return false;
-
-        }
-
-
-        if(
-          selectedType ===
-          "large" &&
-          !isLarge(x)
-        ){
-
-          return false;
-
-        }
-
-
-        /*
-        搜尋
-        */
-
-        const country =
-          String(
-            x.location_country ||
-            x.country ||
-            ""
-          );
-
-
-        const city =
-          String(
-            x.location_city ||
-            x.city ||
-            ""
-          );
-
-
-        const text =
-          (
-            country +
-            " " +
-            city +
-            " " +
-            getName(x)
-          )
-          .toLowerCase();
-
-
-        if(
-          q &&
-          !text.includes(q)
-        ){
-
-          return false;
-
-        }
-
-
-        /*
-        掃描時間
-        */
-
-        const scanTime =
-          getScanTime(x);
-
-
-        if(
-          maxAge > 0 &&
-          minutesOld(scanTime) >
-          maxAge
-        ){
-
-          return false;
-
-        }
-
-
-        /*
-        還能加入
-        */
-
-        if(
-          onlyJoinable
-        ){
-
-          const people =
-            getPeople(x);
-
-
-          const max =
-            getCapacity(x);
-
-
-          if(
-            max > 0 &&
-            people >= max
-          ){
-
-            return false;
-
-          }
-
-        }
-
-
-        /*
-        只看 0 人
-        */
-
-        if(
-          sort === "zero" &&
-          getPeople(x) !== 0
-        ){
-
-          return false;
-
-        }
-
-
-        return true;
-
-      }
-    );
-
-
-  /*
-  排序
-  */
-
-  if(
-    sort === "people" ||
-    sort === "zero"
-  ){
-
-    list.sort(
-      function(a,b){
-
-
-        const diff =
-          getPeople(a) -
-          getPeople(b);
-
-
-        if(
-          diff !== 0
-        ){
-
-          return diff;
-
-        }
-
-
-        return (
-          getScanTime(b) -
-          getScanTime(a)
-        );
-
-      }
-    );
-
-  }
-
-
-  else if(
-    sort ===
-    "peopleHigh"
-  ){
-
-    list.sort(
-      function(a,b){
-
-
-        const diff =
-          getPeople(b) -
-          getPeople(a);
-
-
-        if(
-          diff !== 0
-        ){
-
-          return diff;
-
-        }
-
-
-        return (
-          getScanTime(b) -
-          getScanTime(a)
-        );
-
-      }
-    );
-
-  }
-
-
-  else{
-
-
-    list.sort(
-      function(a,b){
-
-        return (
-          getScanTime(b) -
-          getScanTime(a)
-        );
-
-      }
-    );
-
-  }
-
-
-  const result =
-    document
-    .getElementById("result");
-
-
-  result.innerHTML =
-
-    '<div class="box summary">' +
-
-    '🍄 目前符合條件：' +
-
-    list.length +
-
-    ' 個' +
-
-    '</div>';
-
-
-  if(
-    list.length === 0
-  ){
-
-    result.innerHTML +=
-
-      '<div class="box">' +
-
-      '目前沒有符合條件的菇。' +
-
-      '</div>';
-
-
-    return;
-
-  }
-
-
-  list
-  .slice(0,300)
-  .forEach(
-    function(x){
-
-
-      const people =
-        getPeople(x);
-
-
-      const max =
-        getCapacity(x);
-
-
-      const peopleText =
-        max > 0
-        ?
-        people +
-        " / " +
-        max
-        :
-        String(people);
-
-
-      const country =
-        x.location_country ||
-        x.country ||
-        "";
-
-
-      const city =
-        x.location_city ||
-        x.city ||
-        "";
-
-
-      const location =
-        (
-          country +
-          " " +
-          city
-        ).trim() ||
-        "位置未知";
-
-
-      const scanTime =
-        getScanTime(x);
-
-
-      const old =
-        minutesOld(scanTime);
-
-
-      const gps =
-        Number(x.lat) +
-        "," +
-        Number(x.lng);
-
-
-      const map =
-        "https://www.google.com/maps?q=" +
-        encodeURIComponent(gps);
-
-
-      let warning =
-        "";
-
-
-      if(
-        old > 60
-      ){
-
-        warning =
-
-          '<div class="warning">' +
-
-          '⚠️ 此資料已超過 1 小時，戰鬥人數可能已經改變。' +
-
-          '</div>';
-
-      }
-
-
-      const peopleClass =
-        people === 0
-        ?
-        "people zero"
-        :
-        "people";
-
-
-      const card =
-        document
-        .createElement("div");
-
-
-      card.className =
-        isGiantEvent(x)
-        ?
-        "card giant"
-        :
-        "card";
-
-
-      card.innerHTML =
-
-
-        '<div class="name">' +
-
-        esc(
-          getName(x)
-        ) +
-
-        '</div>' +
-
-
-        '<div class="' +
-        peopleClass +
-        '">' +
-
-        '👥 最後掃描戰鬥人數：' +
-
-        esc(
-          peopleText
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info">' +
-
-        '📍 ' +
-
-        esc(
-          location
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info">' +
-
-        '⚔️ 總戰力：' +
-
-        esc(
-          x.total_power ||
-          0
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info ' +
-        ageClass(scanTime) +
-        '">' +
-
-        '🔄 最新掃描時間：' +
-
-        esc(
-          timeText(
-            scanTime
-          )
-        ) +
-
-        '</div>' +
-
-
-        '<div class="info ' +
-        ageClass(scanTime) +
-        '">' +
-
-        '⏱️ ' +
-
-        esc(
-          ageText(
-            scanTime
-          )
-        ) +
-
-        '</div>' +
-
-
-        warning +
-
-
-        '<div class="info">' +
-
-        '📌 GPS：' +
-
-        esc(
-          gps
-        ) +
-
-        '</div>' +
-
-
-        '<a class="map" ' +
-
-        'href="' +
-
-        esc(
-          map
-        ) +
-
-        '" ' +
-
-        'target="_blank" ' +
-
-        'rel="noopener noreferrer">' +
-
-        '📍 Google 地圖' +
-
-        '</a>';
-
-
-      result.appendChild(
-        card
-      );
-
-    }
-  );
-
-
-  if(
-    list.length > 300
-  ){
-
-    result.insertAdjacentHTML(
-
-      "beforeend",
-
-      '<div class="box">' +
-
-      '符合條件共有 ' +
-
-      list.length +
-
-      ' 筆，目前顯示前 300 筆。' +
-
-      '</div>'
-
-    );
-
-  }
-
-}
-
-
-/*
-事件
-*/
-
-document
-.getElementById("region")
-.addEventListener(
-  "change",
-  load
-);
-
-
-document
-.getElementById("reload")
-.addEventListener(
-  "click",
-  load
-);
-
-
-document
-.getElementById("search")
-.addEventListener(
-  "input",
-  render
-);
-
-
-document
-.getElementById("type")
-.addEventListener(
-  "change",
-  render
-);
-
-
-document
-.getElementById("age")
-.addEventListener(
-  "change",
-  render
-);
-
-
-document
-.getElementById("sort")
-.addEventListener(
-  "change",
-  render
-);
-
-
-document
-.getElementById("join")
-.addEventListener(
-  "change",
-  render
-);
-
-
-/*
-第一次進入網站
-*/
-
-load();
-
-
-</script>
-
-</body>
-
 </html>
