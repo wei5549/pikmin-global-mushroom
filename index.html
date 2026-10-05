@@ -167,15 +167,47 @@ button:disabled{
   color:#ffd27a;
 }
 
-.map{
-  display:inline-block;
+.actions{
+  display:flex;
+  gap:8px;
   margin-top:10px;
-  padding:10px 13px;
-  background:#1976d2;
+}
+
+.map,
+.copy{
+  flex:1;
+  min-width:0;
+  padding:11px 8px;
   border-radius:8px;
   color:white;
   text-decoration:none;
   font-weight:bold;
+  font-size:15px;
+  text-align:center;
+  border:0;
+  margin:0;
+}
+
+.map{
+  background:#1976d2;
+}
+
+.copy{
+  background:#238636;
+  cursor:pointer;
+}
+
+.copy.copied{
+  background:#8957e5;
+}
+
+@media(max-width:480px){
+
+  .map,
+  .copy{
+    font-size:14px;
+  }
+
 }
 </style>
 
@@ -375,7 +407,7 @@ function esc(v){
 }
 
 
-/* Level 3 / 4 */
+/* Level 3 / Level 4 */
 
 function isWanted(x){
 
@@ -390,7 +422,7 @@ function isWanted(x){
 }
 
 
-/* 人數 */
+/* 戰鬥人數 */
 
 function getPeople(x){
 
@@ -466,7 +498,7 @@ function getCapacity(x){
 }
 
 
-/* 掃描時間 */
+/* 最新驗證 / 掃描時間 */
 
 function getScanTime(x){
 
@@ -529,7 +561,7 @@ function getScanTime(x){
 }
 
 
-/* 名稱 */
+/* 菇名稱 */
 
 function getName(x){
 
@@ -543,6 +575,10 @@ function getName(x){
   if(PLAIN_NAMES[type]){
 
     if(level === 4){
+
+      if(type === 19){
+        return "⭐ 巨大活動";
+      }
 
       return (
         "⭐ 巨大" +
@@ -640,7 +676,7 @@ function timeText(v){
 }
 
 
-/* 幾分鐘前 */
+/* 距離現在幾分鐘 */
 
 function minutesOld(v){
 
@@ -833,6 +869,102 @@ function buildTypeMenu(){
 }
 
 
+/* 複製座標 */
+
+async function copyGPS(button){
+
+  const gps =
+    button.dataset.gps;
+
+
+  try{
+
+    if(
+      navigator.clipboard &&
+      window.isSecureContext
+    ){
+
+      await navigator
+      .clipboard
+      .writeText(gps);
+
+    }
+
+    else{
+
+      throw new Error(
+        "clipboard unavailable"
+      );
+
+    }
+
+  }
+
+  catch(e){
+
+    const textarea =
+      document
+      .createElement("textarea");
+
+
+    textarea.value =
+      gps;
+
+
+    textarea.style.position =
+      "fixed";
+
+
+    textarea.style.opacity =
+      "0";
+
+
+    document.body
+    .appendChild(textarea);
+
+
+    textarea.focus();
+
+    textarea.select();
+
+
+    document.execCommand(
+      "copy"
+    );
+
+
+    textarea.remove();
+
+  }
+
+
+  button.textContent =
+    "✅ 已複製";
+
+
+  button.classList.add(
+    "copied"
+  );
+
+
+  setTimeout(
+    function(){
+
+      button.textContent =
+        "📋 複製座標";
+
+
+      button.classList.remove(
+        "copied"
+      );
+
+    },
+    1200
+  );
+
+}
+
+
 /* 抓資料 */
 
 async function load(){
@@ -909,11 +1041,6 @@ async function load(){
     while(true){
 
 
-      /*
-      如果使用者途中換地區，
-      舊的抓取立即停止。
-      */
-
       if(
         thisLoad !==
         loadVersion
@@ -955,7 +1082,7 @@ async function load(){
 
 
       /*
-      下一頁
+      下一頁 cursor
       */
 
       if(cursor){
@@ -969,7 +1096,7 @@ async function load(){
 
 
       /*
-      防快取
+      避免瀏覽器快取
       */
 
       url.searchParams.set(
@@ -1066,7 +1193,7 @@ async function load(){
 
 
       /*
-      新增這一頁
+      合併這一頁資料
       */
 
       source.forEach(
@@ -1119,7 +1246,7 @@ async function load(){
 
 
       /*
-      最新時間排前面
+      最新掃描排前面
       */
 
       mushrooms.sort(
@@ -1135,8 +1262,7 @@ async function load(){
 
 
       /*
-      不等下一頁，
-      現在就更新畫面。
+      每抓完一頁立即更新
       */
 
       buildTypeMenu();
@@ -1180,7 +1306,7 @@ async function load(){
 
 
       /*
-      下一頁 cursor
+      下一頁
       */
 
       const next =
@@ -1200,10 +1326,6 @@ async function load(){
       cursor =
         next;
 
-
-      /*
-      避免連續狂打 API
-      */
 
       await new Promise(
         resolve =>
@@ -1333,7 +1455,7 @@ async function load(){
 }
 
 
-/* 顯示 */
+/* 顯示結果 */
 
 function render(){
 
@@ -1681,10 +1803,18 @@ function render(){
         minutesOld(scanTime);
 
 
-      const gps =
-        Number(x.lat) +
-        "," +
+      const lat =
+        Number(x.lat);
+
+
+      const lng =
         Number(x.lng);
+
+
+      const gps =
+        lat +
+        "," +
+        lng;
 
 
       const map =
@@ -1851,6 +1981,9 @@ function render(){
         '</div>' +
 
 
+        '<div class="actions">' +
+
+
         '<a class="map" ' +
 
         'href="' +
@@ -1865,7 +1998,47 @@ function render(){
 
         '📍 Google 地圖' +
 
-        '</a>';
+        '</a>' +
+
+
+        '<button class="copy" ' +
+
+        'type="button" ' +
+
+        'data-gps="' +
+
+        esc(gps) +
+
+        '">' +
+
+        '📋 複製座標' +
+
+        '</button>' +
+
+
+        '</div>';
+
+
+      /*
+      一鍵複製座標
+      */
+
+      const copyButton =
+        card
+        .querySelector(
+          ".copy"
+        );
+
+
+      copyButton
+      .addEventListener(
+        "click",
+        function(){
+
+          copyGPS(this);
+
+        }
+      );
 
 
       result.appendChild(
