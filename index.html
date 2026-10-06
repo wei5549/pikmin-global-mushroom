@@ -97,10 +97,32 @@ button:disabled{
   padding:15px;
   border-radius:14px;
   margin:10px 0;
+  transition:.2s;
 }
 
 .card.level4{
   border:1px solid #d29922;
+}
+
+/* 已複製過 */
+.card.copied-card{
+  border:2px solid #2ea043;
+  background:#111b15;
+}
+
+.card.copied-card.level4{
+  border:2px solid #2ea043;
+}
+
+.copied-mark{
+  display:inline-block;
+  background:#17351f;
+  color:#79e08f;
+  border:1px solid #2ea043;
+  border-radius:8px;
+  padding:7px 10px;
+  margin-bottom:10px;
+  font-weight:bold;
 }
 
 .levelBadge{
@@ -197,8 +219,19 @@ button:disabled{
   cursor:pointer;
 }
 
-.copy.copied{
+.copy.already{
   background:#8957e5;
+}
+
+.clear-copy{
+  background:#8b2d2d;
+  margin-top:8px;
+}
+
+.copy-count{
+  color:#79e08f;
+  font-size:14px;
+  margin:7px 0;
 }
 
 @media(max-width:480px){
@@ -301,6 +334,15 @@ button:disabled{
 🔄 重新抓取資料
 </button>
 
+<div id="copyCount" class="copy-count"></div>
+
+<button
+  id="clearCopied"
+  class="clear-copy"
+  type="button">
+🗑 清除已複製記錄
+</button>
+
 <div id="status">
 準備抓取資料...
 </div>
@@ -315,6 +357,9 @@ button:disabled{
 
 const API =
 "https://late-glade-6923.awho86958.workers.dev";
+
+const STORAGE_KEY =
+"wei_pikmin_copied_gps";
 
 const REGIONS = {
 
@@ -388,6 +433,112 @@ let mushrooms = [];
 let loadVersion = 0;
 
 
+/* =========================
+   已複製座標記錄
+========================= */
+
+function getCopiedGPS(){
+
+  try{
+
+    const data =
+      JSON.parse(
+        localStorage.getItem(
+          STORAGE_KEY
+        ) || "[]"
+      );
+
+    return new Set(
+      Array.isArray(data)
+      ? data
+      : []
+    );
+
+  }
+
+  catch(e){
+
+    return new Set();
+
+  }
+
+}
+
+
+let copiedGPS =
+  getCopiedGPS();
+
+
+function saveCopiedGPS(){
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        Array.from(copiedGPS)
+      )
+    );
+
+  }
+
+  catch(e){
+
+    console.log(
+      "無法儲存已複製記錄",
+      e
+    );
+
+  }
+
+}
+
+
+function updateCopyCount(){
+
+  document
+  .getElementById("copyCount")
+  .textContent =
+
+    "📋 已記錄 " +
+
+    copiedGPS.size +
+
+    " 個複製過的座標";
+
+}
+
+
+/* 統一座標格式 */
+
+function normalizeGPS(lat,lng){
+
+  const a =
+    Number(lat);
+
+  const b =
+    Number(lng);
+
+
+  if(
+    !Number.isFinite(a) ||
+    !Number.isFinite(b)
+  ){
+
+    return "";
+
+  }
+
+
+  return (
+    a.toFixed(6) +
+    "," +
+    b.toFixed(6)
+  );
+
+}
+
+
 /* HTML 安全 */
 
 function esc(v){
@@ -452,8 +603,10 @@ function getPeople(x){
 
     0;
 
+
   const n =
     Number(value);
+
 
   return Number.isFinite(n)
     ? n
@@ -488,8 +641,10 @@ function getCapacity(x){
 
     0;
 
+
   const n =
     Number(value);
+
 
   return Number.isFinite(n)
     ? n
@@ -498,7 +653,7 @@ function getCapacity(x){
 }
 
 
-/* 最新驗證 / 掃描時間 */
+/* 最新掃描時間 */
 
 function getScanTime(x){
 
@@ -534,7 +689,9 @@ function getScanTime(x){
     v === undefined ||
     v === ""
   ){
+
     return 0;
+
   }
 
 
@@ -546,7 +703,9 @@ function getScanTime(x){
     Number.isFinite(n) &&
     n > 0
   ){
+
     return n;
+
   }
 
 
@@ -574,11 +733,16 @@ function getName(x){
 
   if(PLAIN_NAMES[type]){
 
+
     if(level === 4){
 
+
       if(type === 19){
+
         return "⭐ 巨大活動";
+
       }
+
 
       return (
         "⭐ 巨大" +
@@ -631,7 +795,9 @@ function toMilliseconds(v){
     n <
     100000000000
   ){
+
     n *= 1000;
+
   }
 
 
@@ -640,7 +806,7 @@ function toMilliseconds(v){
 }
 
 
-/* 顯示日期 */
+/* 日期 */
 
 function timeText(v){
 
@@ -662,7 +828,9 @@ function timeText(v){
       d.getTime()
     )
   ){
+
     return "未知";
+
   }
 
 
@@ -676,7 +844,7 @@ function timeText(v){
 }
 
 
-/* 距離現在幾分鐘 */
+/* 幾分鐘前 */
 
 function minutesOld(v){
 
@@ -706,17 +874,23 @@ function ageText(v){
 
 
   if(!isFinite(m)){
+
     return "時間未知";
+
   }
 
 
   if(m < 0){
+
     return "剛剛";
+
   }
 
 
   if(m < 1){
+
     return "不到 1 分鐘前";
+
   }
 
 
@@ -761,12 +935,16 @@ function ageClass(v){
 
 
   if(m <= 30){
+
     return "fresh";
+
   }
 
 
   if(m <= 180){
+
     return "old";
+
   }
 
 
@@ -775,7 +953,7 @@ function ageClass(v){
 }
 
 
-/* 菇種類選單 */
+/* 種類選單 */
 
 function buildTypeMenu(){
 
@@ -813,7 +991,9 @@ function buildTypeMenu(){
 
   types.sort(
     function(a,b){
+
       return a-b;
+
     }
   );
 
@@ -837,7 +1017,9 @@ function buildTypeMenu(){
 
 
       option.textContent =
+
         NAMES[type] ||
+
         (
           "🍄 Type " +
           type
@@ -869,15 +1051,21 @@ function buildTypeMenu(){
 }
 
 
-/* 複製座標 */
+/* =========================
+   複製座標
+========================= */
 
-async function copyGPS(button){
+async function copyGPS(
+  button,
+  card
+){
 
   const gps =
     button.dataset.gps;
 
 
   try{
+
 
     if(
       navigator.clipboard &&
@@ -890,6 +1078,7 @@ async function copyGPS(button){
 
     }
 
+
     else{
 
       throw new Error(
@@ -900,7 +1089,9 @@ async function copyGPS(button){
 
   }
 
+
   catch(e){
+
 
     const textarea =
       document
@@ -938,34 +1129,75 @@ async function copyGPS(button){
   }
 
 
-  button.textContent =
-    "✅ 已複製";
+  /*
+  記錄這個座標
+  */
+
+  copiedGPS.add(gps);
+
+  saveCopiedGPS();
+
+  updateCopyCount();
 
 
-  button.classList.add(
-    "copied"
+  /*
+  立即改卡片外觀
+  */
+
+  card.classList.add(
+    "copied-card"
   );
 
 
-  setTimeout(
-    function(){
+  let mark =
+    card.querySelector(
+      ".copied-mark"
+    );
 
-      button.textContent =
-        "📋 複製座標";
+
+  if(!mark){
+
+    mark =
+      document
+      .createElement("div");
 
 
-      button.classList.remove(
-        "copied"
+    mark.className =
+      "copied-mark";
+
+
+    mark.textContent =
+      "✓ 已複製座標";
+
+
+    const name =
+      card.querySelector(
+        ".name"
       );
 
-    },
-    1200
+
+    name.insertAdjacentElement(
+      "afterend",
+      mark
+    );
+
+  }
+
+
+  button.textContent =
+    "✅ 已複製過";
+
+
+  button.classList.add(
+    "already"
   );
 
 }
 
 
-/* 抓資料 */
+/* =========================
+   抓資料
+========================= */
 
 async function load(){
 
@@ -1064,10 +1296,6 @@ async function load(){
       );
 
 
-      /*
-      地區 bbox
-      */
-
       if(
         region &&
         REGIONS[region]
@@ -1081,10 +1309,6 @@ async function load(){
       }
 
 
-      /*
-      下一頁 cursor
-      */
-
       if(cursor){
 
         url.searchParams.set(
@@ -1094,10 +1318,6 @@ async function load(){
 
       }
 
-
-      /*
-      避免瀏覽器快取
-      */
 
       url.searchParams.set(
         "t",
@@ -1119,11 +1339,15 @@ async function load(){
 
         (
           mushrooms.length > 0
+
           ?
+
           "・目前 " +
           mushrooms.length +
           " 個"
+
           :
+
           ""
         );
 
@@ -1192,10 +1416,6 @@ async function load(){
         [];
 
 
-      /*
-      合併這一頁資料
-      */
-
       source.forEach(
         function(x){
 
@@ -1238,16 +1458,11 @@ async function load(){
 
           seen.add(key);
 
-
           mushrooms.push(x);
 
         }
       );
 
-
-      /*
-      最新掃描排前面
-      */
 
       mushrooms.sort(
         function(a,b){
@@ -1260,10 +1475,6 @@ async function load(){
         }
       );
 
-
-      /*
-      每抓完一頁立即更新
-      */
 
       buildTypeMenu();
 
@@ -1304,10 +1515,6 @@ async function load(){
 
         " 個";
 
-
-      /*
-      下一頁
-      */
 
       const next =
         data.next_cursor;
@@ -1455,7 +1662,9 @@ async function load(){
 }
 
 
-/* 顯示結果 */
+/* =========================
+   顯示結果
+========================= */
 
 function render(){
 
@@ -1638,7 +1847,9 @@ function render(){
 
 
         if(diff !== 0){
+
           return diff;
+
         }
 
 
@@ -1667,7 +1878,9 @@ function render(){
 
 
         if(diff !== 0){
+
           return diff;
+
         }
 
 
@@ -1803,18 +2016,20 @@ function render(){
         minutesOld(scanTime);
 
 
-      const lat =
-        Number(x.lat);
-
-
-      const lng =
-        Number(x.lng);
-
+      /*
+      統一成六位小數，
+      避免同一位置因小數格式不同失憶。
+      */
 
       const gps =
-        lat +
-        "," +
-        lng;
+        normalizeGPS(
+          x.lat,
+          x.lng
+        );
+
+
+      const wasCopied =
+        copiedGPS.has(gps);
 
 
       const map =
@@ -1872,6 +2087,15 @@ function render(){
         "card";
 
 
+      if(wasCopied){
+
+        card.classList.add(
+          "copied-card"
+        );
+
+      }
+
+
       const levelText =
 
         level === 4
@@ -1883,6 +2107,47 @@ function render(){
         :
 
         "🍄 Level 3 大菇";
+
+
+      const copiedMark =
+
+        wasCopied
+
+        ?
+
+        '<div class="copied-mark">' +
+        '✓ 已複製座標' +
+        '</div>'
+
+        :
+
+        "";
+
+
+      const copyButtonText =
+
+        wasCopied
+
+        ?
+
+        "✅ 已複製過"
+
+        :
+
+        "📋 複製座標";
+
+
+      const copyButtonClass =
+
+        wasCopied
+
+        ?
+
+        "copy already"
+
+        :
+
+        "copy";
 
 
       card.innerHTML =
@@ -1901,6 +2166,9 @@ function render(){
         ) +
 
         '</div>' +
+
+
+        copiedMark +
 
 
         '<div class="' +
@@ -2001,7 +2269,11 @@ function render(){
         '</a>' +
 
 
-        '<button class="copy" ' +
+        '<button class="' +
+
+        copyButtonClass +
+
+        '" ' +
 
         'type="button" ' +
 
@@ -2011,7 +2283,7 @@ function render(){
 
         '">' +
 
-        '📋 複製座標' +
+        copyButtonText +
 
         '</button>' +
 
@@ -2020,7 +2292,7 @@ function render(){
 
 
       /*
-      一鍵複製座標
+      複製按鈕
       */
 
       const copyButton =
@@ -2035,7 +2307,10 @@ function render(){
         "click",
         function(){
 
-          copyGPS(this);
+          copyGPS(
+            this,
+            card
+          );
 
         }
       );
@@ -2074,7 +2349,54 @@ function render(){
 }
 
 
-/* 事件 */
+/* =========================
+   清除複製記錄
+========================= */
+
+document
+.getElementById("clearCopied")
+.addEventListener(
+  "click",
+  function(){
+
+
+    if(
+      copiedGPS.size === 0
+    ){
+
+      return;
+
+    }
+
+
+    const ok =
+      confirm(
+        "確定要清除全部已複製座標記錄嗎？"
+      );
+
+
+    if(!ok){
+
+      return;
+
+    }
+
+
+    copiedGPS.clear();
+
+    saveCopiedGPS();
+
+    updateCopyCount();
+
+    render();
+
+  }
+);
+
+
+/* =========================
+   事件
+========================= */
 
 document
 .getElementById("region")
@@ -2140,7 +2462,11 @@ document
 );
 
 
-/* 第一次載入 */
+/* =========================
+   第一次啟動
+========================= */
+
+updateCopyCount();
 
 load();
 
